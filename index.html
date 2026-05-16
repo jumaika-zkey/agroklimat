@@ -1,60 +1,30 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
+
 <head>
-    <meta charset="utf-8">
-    <title>WebGIS Agroklimat Indonesia</title>
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <link rel="stylesheet" href="lib/leaflet.css">
-    <link rel="stylesheet" href="style.css">
+<title>WebGIS Agroklimat</title>
+
+<link rel="stylesheet"
+href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+
+<link rel="stylesheet" href="style.css">
+
 </head>
 
 <body>
 
-<div id="sidebar">
-
-    <h2>Agroklimat Indonesia</h2>
-
-    <div class="layer-group">
-
-        <label>
-            <input type="radio" name="layer" value="mean_rainfall" checked>
-            Mean Rainfall
-        </label>
-
-        <label>
-            <input type="radio" name="layer" value="wet_month_mean">
-            Wet Month
-        </label>
-
-        <label>
-            <input type="radio" name="layer" value="dry_month_mean">
-            Dry Month
-        </label>
-
-        <label>
-            <input type="radio" name="layer" value="wet_consecutive_mean">
-            Wet Consecutive
-        </label>
-
-        <label>
-            <input type="radio" name="layer" value="dry_consecutive_mean">
-            Dry Consecutive
-        </label>
-
-        <label>
-            <input type="radio" name="layer" value="oldeman_class">
-            Oldeman Class
-        </label>
-
-    </div>
-
-</div>
-
 <div id="map"></div>
 
-<script src="lib/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+<script src="https://unpkg.com/georaster"></script>
+
+<script src="https://unpkg.com/georaster-layer-for-leaflet/dist/georaster-layer-for-leaflet.min.js"></script>
+
 <script src="app.js"></script>
 
 </body>
