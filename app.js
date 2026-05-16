@@ -136,14 +136,12 @@ fetch('./data/Batas_Kab_Kot.geojson')
         return null;
     }
 
-    if (value <= 0) return null;
+    if (value <= 0) return '#ff0000';   // merah
+    if (value <= 50) return '#ff8800';  // oranye
+    if (value <= 100) return '#e5ff00'; // kuning
+    if (value <= 200) return '#00ff00'; // hijau
 
-    if (value < 1000) return '#ffffcc';
-    if (value < 1500) return '#c2e699';
-    if (value < 2000) return '#78c679';
-    if (value < 2500) return '#31a354';
-
-    return '#006837';
+    return '#0000ff'; // biru
 }
 // ======================================================
 // LOAD RASTER FUNCTION
@@ -176,7 +174,7 @@ function loadRaster(rasterPath) {
 
             georaster: georaster,
 
-            opacity: 0.85,
+            opacity: 0.6,
 
             resolution: 256,
 
@@ -283,24 +281,39 @@ layerPanel.onAdd = function () {
 
         <hr>
 
-        <div class="legend">
+    <div class="legend">
 
-            <div><span class="legend-color"
-            style="background:#ffffb2;"></span> &lt; 1000</div>
+    <div>
+        <span class="legend-color"
+        style="background:#ff0000;"></span>
+        0
+    </div>
 
-            <div><span class="legend-color"
-            style="background:#fecc5c;"></span> 1000–1500</div>
+    <div>
+        <span class="legend-color"
+        style="background:#ff8800;"></span>
+        50
+    </div>
 
-            <div><span class="legend-color"
-            style="background:#fd8d3c;"></span> 1500–2000</div>
+    <div>
+        <span class="legend-color"
+        style="background:#e5ff00;"></span>
+        100
+    </div>
 
-            <div><span class="legend-color"
-            style="background:#f03b20;"></span> 2000–2500</div>
+    <div>
+        <span class="legend-color"
+        style="background:#00ff00;"></span>
+        200
+    </div>
 
-            <div><span class="legend-color"
-            style="background:#bd0026;"></span> &gt; 2500</div>
+    <div>
+        <span class="legend-color"
+        style="background:#0000ff;"></span>
+        300+
+    </div>
 
-        </div>
+</div>
 
     `;
 
