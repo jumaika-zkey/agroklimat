@@ -283,16 +283,16 @@ function getColor(value, layerName){
     // MEAN RAINFALL
     // =========================================
 
-    if(layerName === "Mean Rainfall"){
+if(layerName === "Mean Rainfall"){
 
-        if(value <= 0) return '#ff0000';
-        if(value <= 50) return '#ff8800';
-        if(value <= 100) return '#ffff00';
-        if(value <= 200) return '#00ff00';
+    if(value <= 50) return '#ff0000';
+    if(value <= 100) return '#ff8800';
+    if(value <= 150) return '#ffff00';
+    if(value <= 200) return '#00ff00';
 
-        return '#0000ff';
+    return '#0000ff';
 
-    }
+}
 
     // =========================================
     // WET MONTH
@@ -388,7 +388,6 @@ function loadRaster(rasterPath, layerName){
     if(currentRasterLayer){
 
         map.removeLayer(currentRasterLayer);
-
         currentRasterLayer = null;
 
     }
@@ -416,8 +415,12 @@ function loadRaster(rasterPath, layerName){
 
     .then(georaster => {
 
-        console.log("Raster loaded:", layerName);
+        console.log("=================================");
+        console.log("Raster Loaded:", layerName);
         console.log("NoData:", georaster.noDataValue);
+        console.log("Min:", georaster.mins);
+        console.log("Max:", georaster.maxs);
+        console.log("=================================");
 
         currentRasterLayer = new GeoRasterLayer({
 
@@ -429,15 +432,15 @@ function loadRaster(rasterPath, layerName){
                 )?.value || 0.7
             ),
 
-            resolution: 128,
+            resolution: 64,
 
             pixelValuesToColorFn: function(pixelValues){
 
-                var value = pixelValues[0];
+                const value = pixelValues[0];
 
-                // =========================================
-                // HANDLE NULL / NODATA
-                // =========================================
+                // =====================================
+                // NULL / UNDEFINED
+                // =====================================
 
                 if(
                     value === null ||
@@ -447,9 +450,9 @@ function loadRaster(rasterPath, layerName){
                     return null;
                 }
 
-                // =========================================
-                // HANDLE GEOTIFF NODATA
-                // =========================================
+                // =====================================
+                // GEOTIFF NODATA
+                // =====================================
 
                 if(
                     georaster.noDataValue !== null &&
@@ -458,56 +461,80 @@ function loadRaster(rasterPath, layerName){
                     return null;
                 }
 
-                // =========================================
-                // REMOVE INVALID BACKGROUND
-                // =========================================
+                // =====================================
+                // FLOAT32 / FLOAT64 BROKEN NODATA
+                // =====================================
 
                 if(
-                    value <= -9999 ||
-                    value >= 999999
+                    Math.abs(value) > 1e20
                 ){
                     return null;
                 }
 
-                // =========================================
-                // REMOVE EXTREME OUTLIERS
-                // =========================================
+                // =====================================
+                // EXTREME VALUES
+                // =====================================
 
-                if(layerName !== "Mean Rainfall"){
-
-                    if(value < 0 || value > 12){
-                        return null;
-                    }
-
+                if(
+                    value < -9999 ||
+                    value > 999999
+                ){
+                    return null;
                 }
 
-                // =========================================
-                // MEAN RAINFALL LIMIT
-                // =========================================
+                // =====================================
+                // MEAN RAINFALL
+                // =====================================
 
                 if(layerName === "Mean Rainfall"){
 
-                    if(value < 0 || value > 500){
+                    if(
+                        value < 0 ||
+                        value > 300
+                    ){
                         return null;
                     }
 
                 }
 
-                // =========================================
-                // OLDEMAN LIMIT
-                // =========================================
+                // =====================================
+                // MONTH / CONSECUTIVE
+                // =====================================
+
+                if(
+                    layerName === "Wet Month" ||
+                    layerName === "Dry Month" ||
+                    layerName === "Wet Consecutive" ||
+                    layerName === "Dry Consecutive"
+                ){
+
+                    if(
+                        value < 0 ||
+                        value > 12
+                    ){
+                        return null;
+                    }
+
+                }
+
+                // =====================================
+                // OLDEMAN
+                // =====================================
 
                 if(layerName === "Oldeman Class"){
 
-                    if(value < 1 || value > 5){
+                    if(
+                        value < 1 ||
+                        value > 5
+                    ){
                         return null;
                     }
 
                 }
 
-                // =========================================
+                // =====================================
                 // RETURN COLOR
-                // =========================================
+                // =====================================
 
                 return getColor(
                     value,
@@ -518,13 +545,22 @@ function loadRaster(rasterPath, layerName){
 
         });
 
+        // =====================================
         // ADD TO MAP
+        // =====================================
+
         currentRasterLayer.addTo(map);
 
-        // SEND RASTER TO BACK
+        // =====================================
+        // RASTER TO BACK
+        // =====================================
+
         currentRasterLayer.bringToBack();
 
-        // ADMIN BOUNDARY ALWAYS ON TOP
+        // =====================================
+        // ADMIN BOUNDARY TO FRONT
+        // =====================================
+
         map.eachLayer(function(layer){
 
             if(layer instanceof L.GeoJSON){
@@ -535,7 +571,10 @@ function loadRaster(rasterPath, layerName){
 
         });
 
-        // FIT ONLY FIRST LOAD
+        // =====================================
+        // INITIAL FIT
+        // =====================================
+
         if(!window.initialZoomDone){
 
             map.fitBounds(
@@ -546,7 +585,6 @@ function loadRaster(rasterPath, layerName){
 
         }
 
-        // RESTORE CURSOR
         document.body.style.cursor = 'default';
 
     })
