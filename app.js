@@ -384,11 +384,17 @@ function loadRaster(rasterPath, layerName){
 
     currentLayerName = layerName;
 
+    // REMOVE OLD RASTER
     if(currentRasterLayer){
 
         map.removeLayer(currentRasterLayer);
 
+        currentRasterLayer = null;
+
     }
+
+    // LOADING CURSOR
+    document.body.style.cursor = 'wait';
 
     fetch(rasterPath)
 
@@ -396,7 +402,9 @@ function loadRaster(rasterPath, layerName){
 
         if(!response.ok){
 
-            throw new Error('Raster gagal dimuat');
+            throw new Error(
+                'Raster gagal dimuat: ' + rasterPath
+            );
 
         }
 
@@ -404,50 +412,142 @@ function loadRaster(rasterPath, layerName){
 
     })
 
-    .then(arrayBuffer =>
-        parseGeoraster(arrayBuffer)
-    )
+    .then(arrayBuffer => parseGeoraster(arrayBuffer))
 
     .then(georaster => {
+
+        console.log("Raster loaded:", layerName);
+        console.log("NoData:", georaster.noDataValue);
 
         currentRasterLayer = new GeoRasterLayer({
 
             georaster: georaster,
 
-            opacity: 0.7,
+            opacity: parseFloat(
+                document.getElementById(
+                    'opacitySlider'
+                )?.value || 0.7
+            ),
 
-            resolution: 256,
+            resolution: 128,
 
-           pixelValuesToColorFn: function(pixelValues) {
+            pixelValuesToColorFn: function(pixelValues){
 
-    var value = pixelValues[0];
+                var value = pixelValues[0];
 
-    // HANDLE NODATA
-    if (
-        value === null ||
-        value === undefined ||
-        isNaN(value) ||
-        value === georaster.noDataValue
-    ) {
-        return null;
-    }
+                // =========================================
+                // HANDLE NULL / NODATA
+                // =========================================
 
-    // REMOVE EXTREME BACKGROUND VALUES
-    if (
-        value < -999 ||
-        value > 10000
-    ) {
-        return null;
-    }
+                if(
+                    value === null ||
+                    value === undefined ||
+                    isNaN(value)
+                ){
+                    return null;
+                }
 
-    return getColor(value, layerName);
-}
+                // =========================================
+                // HANDLE GEOTIFF NODATA
+                // =========================================
+
+                if(
+                    georaster.noDataValue !== null &&
+                    value === georaster.noDataValue
+                ){
+                    return null;
+                }
+
+                // =========================================
+                // REMOVE INVALID BACKGROUND
+                // =========================================
+
+                if(
+                    value <= -9999 ||
+                    value >= 999999
+                ){
+                    return null;
+                }
+
+                // =========================================
+                // REMOVE EXTREME OUTLIERS
+                // =========================================
+
+                if(layerName !== "Mean Rainfall"){
+
+                    if(value < 0 || value > 12){
+                        return null;
+                    }
+
+                }
+
+                // =========================================
+                // MEAN RAINFALL LIMIT
+                // =========================================
+
+                if(layerName === "Mean Rainfall"){
+
+                    if(value < 0 || value > 500){
+                        return null;
+                    }
+
+                }
+
+                // =========================================
+                // OLDEMAN LIMIT
+                // =========================================
+
+                if(layerName === "Oldeman Class"){
+
+                    if(value < 1 || value > 5){
+                        return null;
+                    }
+
+                }
+
+                // =========================================
+                // RETURN COLOR
+                // =========================================
+
+                return getColor(
+                    value,
+                    layerName
+                );
+
+            }
 
         });
 
+        // ADD TO MAP
         currentRasterLayer.addTo(map);
 
-        currentRasterLayer.bringToFront();
+        // SEND RASTER TO BACK
+        currentRasterLayer.bringToBack();
+
+        // ADMIN BOUNDARY ALWAYS ON TOP
+        map.eachLayer(function(layer){
+
+            if(layer instanceof L.GeoJSON){
+
+                layer.bringToFront();
+
+            }
+
+        });
+
+        // FIT ONLY FIRST LOAD
+        if(!window.initialZoomDone){
+
+            map.fitBounds(
+                currentRasterLayer.getBounds()
+            );
+
+            window.initialZoomDone = true;
+
+        }
+
+        // RESTORE CURSOR
+        document.body.style.cursor = 'default';
 
     })
 
@@ -455,12 +555,16 @@ function loadRaster(rasterPath, layerName){
 
         console.error(error);
 
-        alert('Gagal memuat raster');
+        document.body.style.cursor = 'default';
+
+        alert(
+            'Gagal memuat raster:\n' +
+            rasterPath
+        );
 
     });
 
 }
-
 // ======================================================
 // INITIAL RASTER
 // ======================================================
