@@ -125,23 +125,26 @@ fetch('./data/Batas_Kab_Kot.geojson')
 // ======================================================
 // COLOR FUNCTION
 // ======================================================
+    
+    function getColor(value) {
 
-function getColor(value) {
-
-    if (value === null || value === undefined || isNaN(value)) {
+    if (
+        value === null ||
+        value === undefined ||
+        isNaN(value)
+    ) {
         return null;
     }
 
     if (value <= 0) return null;
 
-    if (value < 1000) return '#ffffb2';
-    if (value < 1500) return '#fecc5c';
-    if (value < 2000) return '#fd8d3c';
-    if (value < 2500) return '#f03b20';
+    if (value < 1000) return '#ffffcc';
+    if (value < 1500) return '#c2e699';
+    if (value < 2000) return '#78c679';
+    if (value < 2500) return '#31a354';
 
-    return '#bd0026';
+    return '#006837';
 }
-
 // ======================================================
 // LOAD RASTER FUNCTION
 // ======================================================
@@ -173,7 +176,7 @@ function loadRaster(rasterPath) {
 
             georaster: georaster,
 
-            opacity: 0.65,
+            opacity: 0.85,
 
             resolution: 256,
 
@@ -188,6 +191,7 @@ function loadRaster(rasterPath) {
         });
 
         currentRasterLayer.addTo(map);
+        currentRasterLayer.bringToFront();
 
     })
 
