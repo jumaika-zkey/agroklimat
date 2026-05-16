@@ -32,8 +32,7 @@ var cartoLight = L.tileLayer(
 );
 
 var esriImagery = L.tileLayer(
-    'https://server.arcgisonline.com/ArcGIS/rest/services/' +
-    'World_Imagery/MapServer/tile/{z}/{y}/{x}',
+    'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
     {
         attribution: '&copy; Esri',
         maxZoom: 19
@@ -92,117 +91,55 @@ var rasterFiles = {
 var legends = {
 
     "Mean Rainfall": `
-        <div><span class="legend-color"
-        style="background:#ff0000;"></span>0</div>
-
-        <div><span class="legend-color"
-        style="background:#ff8800;"></span>50</div>
-
-        <div><span class="legend-color"
-        style="background:#ffff00;"></span>100</div>
-
-        <div><span class="legend-color"
-        style="background:#00ff00;"></span>200</div>
-
-        <div><span class="legend-color"
-        style="background:#0000ff;"></span>300+</div>
+        <div><span class="legend-color" style="background:#ff0000;"></span>0 - 50</div>
+        <div><span class="legend-color" style="background:#ff8800;"></span>50 - 100</div>
+        <div><span class="legend-color" style="background:#ffff00;"></span>100 - 150</div>
+        <div><span class="legend-color" style="background:#00ff00;"></span>150 - 200</div>
+        <div><span class="legend-color" style="background:#0000ff;"></span>> 200</div>
     `,
 
     "Wet Month": `
-        <div><span class="legend-color"
-        style="background:#d8f0d2;"></span>0 - 2</div>
-
-        <div><span class="legend-color"
-        style="background:#a8d8c0;"></span>2 - 4</div>
-
-        <div><span class="legend-color"
-        style="background:#78c8c8;"></span>4 - 6</div>
-
-        <div><span class="legend-color"
-        style="background:#4ca6d8;"></span>6 - 8</div>
-
-        <div><span class="legend-color"
-        style="background:#2d73c8;"></span>8 - 10</div>
-
-        <div><span class="legend-color"
-        style="background:#1c3faa;"></span>10 - 12</div>
+        <div><span class="legend-color" style="background:#d8f0d2;"></span>0 - 2</div>
+        <div><span class="legend-color" style="background:#a8d8c0;"></span>2 - 4</div>
+        <div><span class="legend-color" style="background:#78c8c8;"></span>4 - 6</div>
+        <div><span class="legend-color" style="background:#4ca6d8;"></span>6 - 8</div>
+        <div><span class="legend-color" style="background:#2d73c8;"></span>8 - 10</div>
+        <div><span class="legend-color" style="background:#1c3faa;"></span>10 - 12</div>
     `,
 
     "Dry Month": `
-        <div><span class="legend-color"
-        style="background:#f4df72;"></span>0 - 2</div>
-
-        <div><span class="legend-color"
-        style="background:#f8b84a;"></span>2 - 4</div>
-
-        <div><span class="legend-color"
-        style="background:#ff8a33;"></span>4 - 6</div>
-
-        <div><span class="legend-color"
-        style="background:#ff5522;"></span>6 - 8</div>
-
-        <div><span class="legend-color"
-        style="background:#e61f1f;"></span>8 - 10</div>
-
-        <div><span class="legend-color"
-        style="background:#cc0033;"></span>10 - 12</div>
+        <div><span class="legend-color" style="background:#f4df72;"></span>0 - 2</div>
+        <div><span class="legend-color" style="background:#f8b84a;"></span>2 - 4</div>
+        <div><span class="legend-color" style="background:#ff8a33;"></span>4 - 6</div>
+        <div><span class="legend-color" style="background:#ff5522;"></span>6 - 8</div>
+        <div><span class="legend-color" style="background:#e61f1f;"></span>8 - 10</div>
+        <div><span class="legend-color" style="background:#cc0033;"></span>10 - 12</div>
     `,
 
     "Wet Consecutive": `
-        <div><span class="legend-color"
-        style="background:#d8f0d2;"></span>0 - 2</div>
-
-        <div><span class="legend-color"
-        style="background:#a8d8c0;"></span>2 - 4</div>
-
-        <div><span class="legend-color"
-        style="background:#78c8c8;"></span>4 - 6</div>
-
-        <div><span class="legend-color"
-        style="background:#4ca6d8;"></span>6 - 8</div>
-
-        <div><span class="legend-color"
-        style="background:#2d73c8;"></span>8 - 10</div>
-
-        <div><span class="legend-color"
-        style="background:#1c3faa;"></span>10 - 12</div>
+        <div><span class="legend-color" style="background:#d8f0d2;"></span>0 - 2</div>
+        <div><span class="legend-color" style="background:#a8d8c0;"></span>2 - 4</div>
+        <div><span class="legend-color" style="background:#78c8c8;"></span>4 - 6</div>
+        <div><span class="legend-color" style="background:#4ca6d8;"></span>6 - 8</div>
+        <div><span class="legend-color" style="background:#2d73c8;"></span>8 - 10</div>
+        <div><span class="legend-color" style="background:#1c3faa;"></span>10 - 12</div>
     `,
 
     "Dry Consecutive": `
-        <div><span class="legend-color"
-        style="background:#3b0f70;"></span>0 - 2</div>
-
-        <div><span class="legend-color"
-        style="background:#8c2981;"></span>2 - 4</div>
-
-        <div><span class="legend-color"
-        style="background:#de4968;"></span>4 - 6</div>
-
-        <div><span class="legend-color"
-        style="background:#fe9f6d;"></span>6 - 8</div>
-
-        <div><span class="legend-color"
-        style="background:#f9c74f;"></span>8 - 10</div>
-
-        <div><span class="legend-color"
-        style="background:#fcfdbf;"></span>10 - 12</div>
+        <div><span class="legend-color" style="background:#3b0f70;"></span>0 - 2</div>
+        <div><span class="legend-color" style="background:#8c2981;"></span>2 - 4</div>
+        <div><span class="legend-color" style="background:#de4968;"></span>4 - 6</div>
+        <div><span class="legend-color" style="background:#fe9f6d;"></span>6 - 8</div>
+        <div><span class="legend-color" style="background:#f9c74f;"></span>8 - 10</div>
+        <div><span class="legend-color" style="background:#fcfdbf;"></span>10 - 12</div>
     `,
 
     "Oldeman Class": `
-        <div><span class="legend-color"
-        style="background:#0000ff;"></span>Sangat Basah</div>
-
-        <div><span class="legend-color"
-        style="background:#00d5ff;"></span>Basah</div>
-
-        <div><span class="legend-color"
-        style="background:#00ff00;"></span>Sedang</div>
-
-        <div><span class="legend-color"
-        style="background:#ffff00;"></span>Agak Kering</div>
-
-        <div><span class="legend-color"
-        style="background:#ff0000;"></span>Kering</div>
+        <div><span class="legend-color" style="background:#0000ff;"></span>Sangat Basah</div>
+        <div><span class="legend-color" style="background:#00d5ff;"></span>Basah</div>
+        <div><span class="legend-color" style="background:#00ff00;"></span>Sedang</div>
+        <div><span class="legend-color" style="background:#ffff00;"></span>Agak Kering</div>
+        <div><span class="legend-color" style="background:#ff0000;"></span>Kering</div>
     `
 };
 
@@ -271,32 +208,24 @@ fetch('./data/Batas_Kab_Kot.geojson')
 
 function getColor(value, layerName){
 
-    if(
-        value === null ||
-        value === undefined ||
-        isNaN(value)
-    ){
-        return null;
+    // ==================================================
+    // MEAN RAINFALL
+    // ==================================================
+
+    if(layerName === "Mean Rainfall"){
+
+        if(value <= 50) return '#ff0000';
+        if(value <= 100) return '#ff8800';
+        if(value <= 150) return '#ffff00';
+        if(value <= 200) return '#00ff00';
+
+        return '#0000ff';
+
     }
 
-    // =========================================
-    // MEAN RAINFALL
-    // =========================================
-
-if(layerName === "Mean Rainfall"){
-
-    if(value <= 50) return '#ff0000';
-    if(value <= 100) return '#ff8800';
-    if(value <= 150) return '#ffff00';
-    if(value <= 200) return '#00ff00';
-
-    return '#0000ff';
-
-}
-
-    // =========================================
+    // ==================================================
     // WET MONTH
-    // =========================================
+    // ==================================================
 
     if(layerName === "Wet Month"){
 
@@ -310,9 +239,9 @@ if(layerName === "Mean Rainfall"){
 
     }
 
-    // =========================================
+    // ==================================================
     // DRY MONTH
-    // =========================================
+    // ==================================================
 
     if(layerName === "Dry Month"){
 
@@ -326,9 +255,9 @@ if(layerName === "Mean Rainfall"){
 
     }
 
-    // =========================================
+    // ==================================================
     // WET CONSECUTIVE
-    // =========================================
+    // ==================================================
 
     if(layerName === "Wet Consecutive"){
 
@@ -342,9 +271,9 @@ if(layerName === "Mean Rainfall"){
 
     }
 
-    // =========================================
+    // ==================================================
     // DRY CONSECUTIVE
-    // =========================================
+    // ==================================================
 
     if(layerName === "Dry Consecutive"){
 
@@ -358,9 +287,9 @@ if(layerName === "Mean Rainfall"){
 
     }
 
-    // =========================================
+    // ==================================================
     // OLDEMAN CLASS
-    // =========================================
+    // ==================================================
 
     if(layerName === "Oldeman Class"){
 
@@ -384,7 +313,7 @@ function loadRaster(rasterPath, layerName){
 
     currentLayerName = layerName;
 
-    // REMOVE OLD RASTER
+    // REMOVE OLD LAYER
     if(currentRasterLayer){
 
         map.removeLayer(currentRasterLayer);
@@ -392,7 +321,6 @@ function loadRaster(rasterPath, layerName){
 
     }
 
-    // LOADING CURSOR
     document.body.style.cursor = 'wait';
 
     fetch(rasterPath)
@@ -416,7 +344,7 @@ function loadRaster(rasterPath, layerName){
     .then(georaster => {
 
         console.log("=================================");
-        console.log("Raster Loaded:", layerName);
+        console.log("Raster:", layerName);
         console.log("NoData:", georaster.noDataValue);
         console.log("Min:", georaster.mins);
         console.log("Max:", georaster.maxs);
@@ -432,15 +360,15 @@ function loadRaster(rasterPath, layerName){
                 )?.value || 0.7
             ),
 
-            resolution: 64,
+            resolution: 128,
 
             pixelValuesToColorFn: function(pixelValues){
 
                 const value = pixelValues[0];
 
-                // =====================================
+                // ==================================
                 // NULL / UNDEFINED
-                // =====================================
+                // ==================================
 
                 if(
                     value === null ||
@@ -450,9 +378,17 @@ function loadRaster(rasterPath, layerName){
                     return null;
                 }
 
-                // =====================================
-                // GEOTIFF NODATA
-                // =====================================
+                // ==================================
+                // REMOVE SEA / BACKGROUND
+                // ==================================
+
+                if(value === 0){
+                    return null;
+                }
+
+                // ==================================
+                // NODATA
+                // ==================================
 
                 if(
                     georaster.noDataValue !== null &&
@@ -461,9 +397,9 @@ function loadRaster(rasterPath, layerName){
                     return null;
                 }
 
-                // =====================================
-                // FLOAT32 / FLOAT64 BROKEN NODATA
-                // =====================================
+                // ==================================
+                // EXTREME FLOAT VALUES
+                // ==================================
 
                 if(
                     Math.abs(value) > 1e20
@@ -471,9 +407,9 @@ function loadRaster(rasterPath, layerName){
                     return null;
                 }
 
-                // =====================================
-                // EXTREME VALUES
-                // =====================================
+                // ==================================
+                // INVALID VALUES
+                // ==================================
 
                 if(
                     value < -9999 ||
@@ -482,14 +418,14 @@ function loadRaster(rasterPath, layerName){
                     return null;
                 }
 
-                // =====================================
+                // ==================================
                 // MEAN RAINFALL
-                // =====================================
+                // ==================================
 
                 if(layerName === "Mean Rainfall"){
 
                     if(
-                        value < 0 ||
+                        value <= 0 ||
                         value > 300
                     ){
                         return null;
@@ -497,9 +433,9 @@ function loadRaster(rasterPath, layerName){
 
                 }
 
-                // =====================================
+                // ==================================
                 // MONTH / CONSECUTIVE
-                // =====================================
+                // ==================================
 
                 if(
                     layerName === "Wet Month" ||
@@ -509,7 +445,7 @@ function loadRaster(rasterPath, layerName){
                 ){
 
                     if(
-                        value < 0 ||
+                        value <= 0 ||
                         value > 12
                     ){
                         return null;
@@ -517,14 +453,14 @@ function loadRaster(rasterPath, layerName){
 
                 }
 
-                // =====================================
+                // ==================================
                 // OLDEMAN
-                // =====================================
+                // ==================================
 
                 if(layerName === "Oldeman Class"){
 
                     if(
-                        value < 1 ||
+                        value <= 0 ||
                         value > 5
                     ){
                         return null;
@@ -532,9 +468,9 @@ function loadRaster(rasterPath, layerName){
 
                 }
 
-                // =====================================
+                // ==================================
                 // RETURN COLOR
-                // =====================================
+                // ==================================
 
                 return getColor(
                     value,
@@ -545,21 +481,9 @@ function loadRaster(rasterPath, layerName){
 
         });
 
-        // =====================================
-        // ADD TO MAP
-        // =====================================
-
         currentRasterLayer.addTo(map);
 
-        // =====================================
-        // RASTER TO BACK
-        // =====================================
-
         currentRasterLayer.bringToBack();
-
-        // =====================================
-        // ADMIN BOUNDARY TO FRONT
-        // =====================================
 
         map.eachLayer(function(layer){
 
@@ -570,10 +494,6 @@ function loadRaster(rasterPath, layerName){
             }
 
         });
-
-        // =====================================
-        // INITIAL FIT
-        // =====================================
 
         if(!window.initialZoomDone){
 
@@ -603,6 +523,7 @@ function loadRaster(rasterPath, layerName){
     });
 
 }
+
 // ======================================================
 // INITIAL RASTER
 // ======================================================
@@ -716,22 +637,22 @@ document.addEventListener(
     'change',
     function(e){
 
-    if(e.target.name === 'raster'){
+        if(e.target.name === 'raster'){
 
-        var selectedRaster =
-            e.target.value;
+            var selectedRaster =
+                e.target.value;
 
-        loadRaster(
-            rasterFiles[selectedRaster],
-            selectedRaster
-        );
+            loadRaster(
+                rasterFiles[selectedRaster],
+                selectedRaster
+            );
 
-        document.getElementById(
-            'legendContainer'
-        ).innerHTML =
-            legends[selectedRaster];
+            document.getElementById(
+                'legendContainer'
+            ).innerHTML =
+                legends[selectedRaster];
 
-    }
+        }
 
 });
 
@@ -743,17 +664,17 @@ document.addEventListener(
     'input',
     function(e){
 
-    if(e.target.id === 'opacitySlider'){
+        if(e.target.id === 'opacitySlider'){
 
-        if(currentRasterLayer){
+            if(currentRasterLayer){
 
-            currentRasterLayer.setOpacity(
-                parseFloat(e.target.value)
-            );
+                currentRasterLayer.setOpacity(
+                    parseFloat(e.target.value)
+                );
+
+            }
 
         }
-
-    }
 
 });
 
