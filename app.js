@@ -67,20 +67,21 @@ fetch('./data/mean_rainfall_2015_2025.tif')
 
         resolution: 256,
 
-        pixelValuesToColorFn: function(pixelValues){
+    pixelValuesToColorFn: function(pixelValues){
 
-            var value = pixelValues[0];
+    var value = pixelValues[0];
 
-            if(value === null) return null;
+    if(value === null || value <= 0){
+        return null;
+    }
 
-            if(value < 1000) return "#ffffcc";
-            if(value < 1500) return "#a1dab4";
-            if(value < 2000) return "#41b6c4";
-            if(value < 2500) return "#2c7fb8";
+    if(value < 1000) return "#ffffb2";
+    if(value < 1500) return "#fecc5c";
+    if(value < 2000) return "#fd8d3c";
+    if(value < 2500) return "#f03b20";
 
-            return "#253494";
-
-        }
+    return "#bd0026";
+}
 
     });
 
