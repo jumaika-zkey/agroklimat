@@ -1,120 +1,91 @@
-// ==============================
+// ======================
+// MAP
+// ======================
+
+var map = L.map('map').setView([-2.5, 118], 5);
+
+// ======================
 // BASEMAP
-// ==============================
+// ======================
 
-const map = L.map('map').setView([-2.5, 118], 5);
+var osm = L.tileLayer(
+'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+{
+    attribution:'© OpenStreetMap'
+}).addTo(map);
 
-L.tileLayer(
-    'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-    {
-        attribution: '&copy; OpenStreetMap'
-    }
-).addTo(map);
+// ======================
+// LOAD GEOJSON
+// ======================
 
-
-// ==============================
-// TILE LAYERS
-// ==============================
-
-const layers = {
-
-    mean_rainfall: L.tileLayer(
-        'tiles/mean_rainfall/{z}/{x}/{y}.png',
-        {
-            tms: false,
-            opacity: 0.8,
-            maxZoom: 12
-        }
-    ),
-
-    wet_month_mean: L.tileLayer(
-        'tiles/wet_month_mean/{z}/{x}/{y}.png',
-        {
-            opacity: 0.8,
-            maxZoom: 12
-        }
-    ),
-
-    dry_month_mean: L.tileLayer(
-        'tiles/dry_month_mean/{z}/{x}/{y}.png',
-        {
-            opacity: 0.8,
-            maxZoom: 12
-        }
-    ),
-
-    wet_consecutive_mean: L.tileLayer(
-        'tiles/wet_consecutive_mean/{z}/{x}/{y}.png',
-        {
-            opacity: 0.8,
-            maxZoom: 12
-        }
-    ),
-
-    dry_consecutive_mean: L.tileLayer(
-        'tiles/dry_consecutive_mean/{z}/{x}/{y}.png',
-        {
-            opacity: 0.8,
-            maxZoom: 12
-        }
-    ),
-
-    oldeman_class: L.tileLayer(
-        'tiles/oldeman_class/{z}/{x}/{y}.png',
-        {
-            opacity: 0.8,
-            maxZoom: 12
-        }
-    )
-
-};
-
-
-// ==============================
-// DEFAULT LAYER
-// ==============================
-
-layers.mean_rainfall.addTo(map);
-
-let currentLayer = layers.mean_rainfall;
-
-
-// ==============================
-// SWITCH LAYER
-// ==============================
-
-document.querySelectorAll('input[name="layer"]')
-.forEach(radio => {
-
-    radio.addEventListener('change', function() {
-
-        map.removeLayer(currentLayer);
-
-        currentLayer = layers[this.value];
-
-        currentLayer.addTo(map);
-
-    });
-
-});
-
-
-// ==============================
-// GEOJSON
-// ==============================
-
-fetch('data/Batas_Kab_Kot.geojson')
+fetch('./data/Batas_Kab_Kot.geojson')
 .then(response => response.json())
 .then(data => {
 
-    L.geoJSON(data, {
+    var batas = L.geoJSON(data,{
 
-        style: {
-            color: '#222',
-            weight: 0.5,
-            fillOpacity: 0
+        style:{
+            color:'#000000',
+            weight:1,
+            fillOpacity:0
+        },
+
+        onEachFeature:function(feature, layer){
+
+            if(feature.properties){
+
+                layer.bindPopup(
+                    '<b>Kabupaten/Kota</b><br>' +
+                    JSON.stringify(feature.properties)
+                );
+
+            }
+
         }
 
     }).addTo(map);
+
+});
+
+// ======================
+// LOAD RASTER
+// ======================
+
+fetch('./data/mean_rainfall_2015_2025.tif')
+
+.then(response => response.arrayBuffer())
+
+.then(arrayBuffer => parseGeoraster(arrayBuffer))
+
+.then(georaster => {
+
+    var layer = new GeoRasterLayer({
+
+        georaster: georaster,
+
+        opacity: 0.8,
+
+        resolution: 256,
+
+        pixelValuesToColorFn: function(pixelValues){
+
+            var value = pixelValues[0];
+
+            if(value === null) return null;
+
+            if(value < 1000) return "#ffffcc";
+            if(value < 1500) return "#a1dab4";
+            if(value < 2000) return "#41b6c4";
+            if(value < 2500) return "#2c7fb8";
+
+            return "#253494";
+
+        }
+
+    });
+
+    layer.addTo(map);
+
+    map.fitBounds(layer.getBounds());
 
 });
