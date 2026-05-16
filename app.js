@@ -1,45 +1,120 @@
-// ======================
+// ======================================================
+// WEBGIS AGROKLIMAT INDONESIA
+// ======================================================
+
+// ======================================================
 // MAP
-// ======================
+// ======================================================
 
-var map = L.map('map').setView([-2.5, 118], 5);
+var map = L.map('map', {
+    zoomControl: true,
+    attributionControl: true
+}).setView([-2.5, 118], 5);
 
-// ======================
-// BASEMAP
-// ======================
+// ======================================================
+// BASEMAPS
+// ======================================================
 
 var osm = L.tileLayer(
-'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-{
-    attribution:'© OpenStreetMap'
-}).addTo(map);
+    'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+    {
+        attribution: '&copy; OpenStreetMap',
+        maxZoom: 19
+    }
+);
 
-// ======================
-// LOAD GEOJSON
-// ======================
+var cartoLight = L.tileLayer(
+    'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
+    {
+        attribution: '&copy; CartoDB',
+        maxZoom: 19
+    }
+);
+
+var esriImagery = L.tileLayer(
+    'https://server.arcgisonline.com/ArcGIS/rest/services/' +
+    'World_Imagery/MapServer/tile/{z}/{y}/{x}',
+    {
+        attribution: '&copy; Esri',
+        maxZoom: 19
+    }
+);
+
+// DEFAULT BASEMAP
+osm.addTo(map);
+
+// ======================================================
+// BASEMAP CONTROL
+// ======================================================
+
+var baseMaps = {
+    "OpenStreetMap": osm,
+    "Carto Light": cartoLight,
+    "Esri Satellite": esriImagery
+};
+
+// ======================================================
+// GLOBAL VARIABLES
+// ======================================================
+
+var currentRasterLayer = null;
+
+var rasterFiles = {
+    "Mean Rainfall": "./data/mean_rainfall_2015_2025.tif",
+    "Wet Month": "./data/wet_month_mean.tif",
+    "Dry Month": "./data/dry_month_mean.tif",
+    "Wet Consecutive": "./data/wet_consecutive_mean.tif",
+    "Dry Consecutive": "./data/dry_consecutive_mean.tif",
+    "Oldeman Class": "./data/true_oldeman_class.tif"
+};
+
+// ======================================================
+// GEOJSON ADMINISTRATIVE BOUNDARY
+// ======================================================
 
 fetch('./data/Batas_Kab_Kot.geojson')
+
 .then(response => response.json())
+
 .then(data => {
 
-    var batas = L.geoJSON(data,{
+    var batas = L.geoJSON(data, {
 
-        style:{
-            color:'#000000',
-            weight:1,
-            fillOpacity:0
+        style: function () {
+            return {
+                color: '#222222',
+                weight: 0.7,
+                fillOpacity: 0
+            };
         },
 
-        onEachFeature:function(feature, layer){
+        onEachFeature: function (feature, layer) {
 
-            if(feature.properties){
+            var props = feature.properties;
 
-                layer.bindPopup(
-                    '<b>Kabupaten/Kota</b><br>' +
-                    JSON.stringify(feature.properties)
-                );
+            var popupContent = `
+                <div style="font-size:13px;">
+                    <b>Kabupaten/Kota</b><br><br>
+                    ${Object.keys(props)
+                        .map(key => `<b>${key}</b>: ${props[key]}`)
+                        .join('<br>')}
+                </div>
+            `;
 
-            }
+            layer.bindPopup(popupContent);
+
+            layer.on({
+                mouseover: function (e) {
+                    e.target.setStyle({
+                        weight: 2,
+                        color: '#000000'
+                    });
+                },
+
+                mouseout: function (e) {
+                    batas.resetStyle(e.target);
+                }
+            });
 
         }
 
@@ -47,46 +122,231 @@ fetch('./data/Batas_Kab_Kot.geojson')
 
 });
 
-// ======================
-// LOAD RASTER
-// ======================
+// ======================================================
+// COLOR FUNCTION
+// ======================================================
 
-fetch('./data/mean_rainfall_2015_2025.tif')
+function getColor(value) {
 
-.then(response => response.arrayBuffer())
-
-.then(arrayBuffer => parseGeoraster(arrayBuffer))
-
-.then(georaster => {
-
-    var layer = new GeoRasterLayer({
-
-        georaster: georaster,
-
-        opacity: 0.8,
-
-        resolution: 256,
-
-    pixelValuesToColorFn: function(pixelValues){
-
-    var value = pixelValues[0];
-
-    if(value === null || value <= 0){
+    if (value === null || value === undefined || isNaN(value)) {
         return null;
     }
 
-    if(value < 1000) return "#ffffb2";
-    if(value < 1500) return "#fecc5c";
-    if(value < 2000) return "#fd8d3c";
-    if(value < 2500) return "#f03b20";
+    if (value <= 0) return null;
 
-    return "#bd0026";
+    if (value < 1000) return '#ffffb2';
+    if (value < 1500) return '#fecc5c';
+    if (value < 2000) return '#fd8d3c';
+    if (value < 2500) return '#f03b20';
+
+    return '#bd0026';
 }
 
+// ======================================================
+// LOAD RASTER FUNCTION
+// ======================================================
+
+function loadRaster(rasterPath) {
+
+    // REMOVE PREVIOUS RASTER
+    if (currentRasterLayer) {
+        map.removeLayer(currentRasterLayer);
+    }
+
+    fetch(rasterPath)
+
+    .then(response => {
+
+        if (!response.ok) {
+            throw new Error('Raster gagal dimuat');
+        }
+
+        return response.arrayBuffer();
+
+    })
+
+    .then(arrayBuffer => parseGeoraster(arrayBuffer))
+
+    .then(georaster => {
+
+        currentRasterLayer = new GeoRasterLayer({
+
+            georaster: georaster,
+
+            opacity: 0.65,
+
+            resolution: 256,
+
+            pixelValuesToColorFn: function (pixelValues) {
+
+                var value = pixelValues[0];
+
+                return getColor(value);
+
+            }
+
+        });
+
+        currentRasterLayer.addTo(map);
+
+    })
+
+    .catch(error => {
+        console.error(error);
+        alert('Gagal memuat raster.');
     });
 
-    layer.addTo(map);
+}
 
-    map.fitBounds(layer.getBounds());
+// ======================================================
+// INITIAL RASTER
+// ======================================================
+
+loadRaster(rasterFiles["Mean Rainfall"]);
+
+// ======================================================
+// CUSTOM LAYER PANEL
+// ======================================================
+
+var layerPanel = L.control({ position: 'topleft' });
+
+layerPanel.onAdd = function () {
+
+    var div = L.DomUtil.create('div', 'layer-panel');
+
+    div.innerHTML = `
+
+        <div class="panel-title">
+            Agroklimat Indonesia
+        </div>
+
+        <div class="layer-item">
+            <input type="radio"
+                   name="raster"
+                   value="Mean Rainfall"
+                   checked>
+            Mean Rainfall
+        </div>
+
+        <div class="layer-item">
+            <input type="radio"
+                   name="raster"
+                   value="Wet Month">
+            Wet Month
+        </div>
+
+        <div class="layer-item">
+            <input type="radio"
+                   name="raster"
+                   value="Dry Month">
+            Dry Month
+        </div>
+
+        <div class="layer-item">
+            <input type="radio"
+                   name="raster"
+                   value="Wet Consecutive">
+            Wet Consecutive
+        </div>
+
+        <div class="layer-item">
+            <input type="radio"
+                   name="raster"
+                   value="Dry Consecutive">
+            Dry Consecutive
+        </div>
+
+        <div class="layer-item">
+            <input type="radio"
+                   name="raster"
+                   value="Oldeman Class">
+            Oldeman Class
+        </div>
+
+        <hr>
+
+        <div style="font-size:13px;">
+            <b>Opacity</b>
+        </div>
+
+        <input type="range"
+               id="opacitySlider"
+               min="0"
+               max="1"
+               step="0.1"
+               value="0.65"
+               style="width:100%;">
+
+        <hr>
+
+        <div class="legend">
+
+            <div><span class="legend-color"
+            style="background:#ffffb2;"></span> &lt; 1000</div>
+
+            <div><span class="legend-color"
+            style="background:#fecc5c;"></span> 1000–1500</div>
+
+            <div><span class="legend-color"
+            style="background:#fd8d3c;"></span> 1500–2000</div>
+
+            <div><span class="legend-color"
+            style="background:#f03b20;"></span> 2000–2500</div>
+
+            <div><span class="legend-color"
+            style="background:#bd0026;"></span> &gt; 2500</div>
+
+        </div>
+
+    `;
+
+    L.DomEvent.disableClickPropagation(div);
+
+    return div;
+};
+
+layerPanel.addTo(map);
+
+// ======================================================
+// RASTER SWITCHER
+// ======================================================
+
+document.addEventListener('change', function (e) {
+
+    if (e.target.name === 'raster') {
+
+        var selectedRaster = e.target.value;
+
+        loadRaster(rasterFiles[selectedRaster]);
+
+    }
 
 });
+
+// ======================================================
+// OPACITY SLIDER
+// ======================================================
+
+document.addEventListener('input', function (e) {
+
+    if (e.target.id === 'opacitySlider') {
+
+        if (currentRasterLayer) {
+
+            currentRasterLayer.setOpacity(
+                parseFloat(e.target.value)
+            );
+
+        }
+
+    }
+
+});
+
+// ======================================================
+// LAYER CONTROL
+// ======================================================
+
+L.control.layers(baseMaps, null, {
+    collapsed: true
+}).addTo(map);
