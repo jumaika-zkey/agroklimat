@@ -67,7 +67,7 @@ var currentLayerName = "Mean Rainfall";
 var rasterFiles = {
 
     "Mean Rainfall":
-        "./data/mean_rainfall_2015_2025.tif",
+        "./data/mean_rainfall.tif",
 
     "Wet Month":
         "./data/wet_month_mean.tif",
