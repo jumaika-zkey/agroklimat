@@ -418,16 +418,30 @@ function loadRaster(rasterPath, layerName){
 
             resolution: 256,
 
-            pixelValuesToColorFn: function(pixelValues){
+           pixelValuesToColorFn: function(pixelValues) {
 
-                var value = pixelValues[0];
+    var value = pixelValues[0];
 
-                return getColor(
-                    value,
-                    layerName
-                );
+    // HANDLE NODATA
+    if (
+        value === null ||
+        value === undefined ||
+        isNaN(value) ||
+        value === georaster.noDataValue
+    ) {
+        return null;
+    }
 
-            }
+    // REMOVE EXTREME BACKGROUND VALUES
+    if (
+        value < -999 ||
+        value > 10000
+    ) {
+        return null;
+    }
+
+    return getColor(value, layerName);
+}
 
         });
 
