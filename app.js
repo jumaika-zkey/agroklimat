@@ -60,7 +60,7 @@ var baseMaps = {
 var currentRasterLayer = null;
 
 var rasterFiles = {
-    "Mean Rainfall": "./data/mean_rainfall_2015_2025.tif",
+    "Mean Rainfall": "./data/mean_rainfall.tif",
     "Wet Month": "./data/wet_month_mean.tif",
     "Dry Month": "./data/dry_month_mean.tif",
     "Wet Consecutive": "./data/wet_consecutive_mean.tif",
