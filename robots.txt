@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+Sitemap:
+https://jumaika-zkey.github.io/agroklimat/sitemap.xml
