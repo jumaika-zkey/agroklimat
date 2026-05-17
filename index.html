@@ -1,0 +1,2230 @@
+<!doctype html>
+<html lang="id">
+
+<head>
+
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+<title>Jumaika Agroclimate WebGIS</title>
+
+<link rel="stylesheet" href="css/leaflet.css">
+<link rel="stylesheet" href="css/leaflet-measure.css">
+
+<style>
+
+/* ======================================================
+   GLOBAL
+====================================================== */
+
+html,
+body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+
+    font-family: 'Segoe UI', sans-serif;
+
+    background: #eef2f7;
+}
+
+#map {
+    width: 100%;
+    height: 100%;
+}
+
+/* ======================================================
+   HEADER
+====================================================== */
+
+.map-title {
+
+    position: absolute;
+
+    top: 8px;
+    left: 8px;
+
+    z-index: 1200;
+
+    background: rgba(255,255,255,0.95);
+
+    backdrop-filter: blur(12px);
+
+    border-radius: 22px;
+
+    padding: 18px 26px;
+
+    box-shadow: 0 6px 24px rgba(0,0,0,0.16);
+}
+
+.map-title h1 {
+
+    margin: 0;
+
+    font-size: 22px;
+    font-weight: 700;
+
+    color: #111827;
+}
+
+.map-title p {
+
+    margin: 6px 0 0 0;
+
+    font-size: 14px;
+
+    color: #6b7280;
+}
+
+/* ======================================================
+   TOOLBAR
+====================================================== */
+
+.toolbar-card {
+
+    position: absolute;
+
+    top: 105px;
+    left: 15px;
+
+    z-index: 1200;
+
+    background: rgba(255,255,255,0.95);
+
+    backdrop-filter: blur(25px);
+
+    border-radius: 10px;
+
+    padding: 7px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 5px;
+
+    box-shadow: 0 6px 24px rgba(0,0,0,0.18);
+}
+
+.tool-btn {
+
+    width: 42px;
+    height: 42px;
+
+    border: none;
+
+    border-radius: 12px;
+
+    background: white;
+
+    cursor: pointer;
+
+    font-size: 18px;
+
+    transition: all 0.2s ease;
+}
+
+.tool-btn:hover {
+
+    background: #2563eb;
+
+    color: white;
+}
+
+.zoom-group {
+
+    display: flex;
+
+    gap: 8px;
+}
+
+/* ======================================================
+   LAYER PANEL
+====================================================== */
+
+.layer-panel {
+
+    position: absolute;
+
+    top: 15px;
+    right: 15px;
+
+    z-index: 1200;
+
+    width: 260px;
+
+    background: rgba(255,255,255,0.96);
+
+    backdrop-filter: blur(12px);
+
+    border-radius: 22px;
+
+    padding: 18px;
+
+    box-shadow: 0 6px 24px rgba(0,0,0,0.18);
+
+    max-height: 75vh;
+
+    overflow-y: auto;
+
+    transition: all 0.3s ease;
+}
+
+/* ======================================================
+   PANEL COLLAPSE
+====================================================== */
+
+.layer-panel.collapsed {
+
+    width: 48px;
+
+    height: 48px;
+
+    padding: 0;
+
+    overflow: hidden;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+}
+
+.layer-panel.collapsed .layer-content {
+
+    display: none;
+}
+
+.layer-panel.collapsed .panel-toggle {
+
+    position: static;
+
+    margin: 0;
+}
+
+/* ======================================================
+   TOGGLE BUTTON
+====================================================== */
+
+.panel-toggle {
+
+    position: absolute;
+
+    top: 10px;
+    right: 12px;
+
+    width: 28px;
+    height: 28px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    cursor: pointer;
+
+    font-size: 22px;
+
+    font-weight: bold;
+
+    color: #4b5563;
+
+    user-select: none;
+
+    border-radius: 8px;
+
+    transition: all 0.2s ease;
+}
+
+.panel-toggle:hover {
+
+    background: rgba(0,0,0,0.06);
+}
+
+/* ======================================================
+   SCROLLBAR
+====================================================== */
+
+.layer-panel::-webkit-scrollbar {
+
+    width: 5px;
+}
+
+.layer-panel::-webkit-scrollbar-thumb {
+
+    background: #cbd5e1;
+
+    border-radius: 10px;
+}
+
+/* ======================================================
+   LAYER ITEM
+====================================================== */
+
+.layer-item {
+
+    margin-bottom: 16px;
+}
+
+.layer-header {
+
+    display: flex;
+
+    align-items: center;
+
+    cursor: pointer;
+
+    font-size: 15px;
+
+    color: #1f2937;
+
+    transition: all 0.2s ease;
+}
+
+.layer-header:hover {
+
+    color: #2563eb;
+}
+
+.layer-header input {
+
+    margin-right: 12px;
+
+    width: 18px;
+    height: 18px;
+
+    accent-color: #2563eb;
+}
+
+/* ======================================================
+   INLINE LEGEND
+====================================================== */
+
+.layer-legend {
+
+    margin-left: 30px;
+
+    margin-top: 10px;
+
+    padding-left: 12px;
+
+    border-left: 2px solid #d1d5db;
+
+    display: none;
+
+    transition: all 0.25s ease;
+}
+
+.layer-item.active .layer-legend {
+
+    display: block;
+}
+
+.layer-legend-item {
+
+    display: flex;
+
+    align-items: center;
+
+    margin-bottom: 8px;
+
+    font-size: 13px;
+
+    color: #4b5563;
+}
+
+.layer-legend-color {
+
+    width: 18px;
+    height: 18px;
+
+    border-radius: 4px;
+
+    margin-right: 8px;
+
+    border: 1px solid rgba(0,0,0,0.1);
+}
+
+/* ======================================================
+   POPUP
+====================================================== */
+
+.leaflet-popup-content-wrapper {
+
+    border-radius: 18px;
+
+    box-shadow: 0 6px 24px rgba(0,0,0,0.22);
+}
+
+.popup-title {
+
+    font-size: 16px;
+
+    font-weight: 700;
+
+    margin-bottom: 6px;
+}
+/* ======================================================
+   COORD BAR
+====================================================== */
+
+#coordBar {
+
+    position: absolute;
+
+    bottom: 14px;
+    left: 20px;
+
+    z-index: 1200;
+
+    display: flex;
+
+    align-items: center;
+
+    background: rgba(255,255,255,0.92);
+
+    backdrop-filter: blur(10px);
+
+    padding: 8px 12px;
+
+    border-radius: 14px;
+
+    font-size: 12px;
+
+    color: #374151;
+
+    box-shadow: 0 4px 14px rgba(0,0,0,0.12);
+}
+
+.coord-text {
+
+    white-space: nowrap;
+
+    font-weight: 500;
+
+    letter-spacing: 0.2px;
+}
+
+.bottom-zoom {
+
+    display: flex;
+
+    gap: 6px;
+
+    margin-left: 12px;
+}
+
+.bottom-zoom button {
+
+    width: 28px;
+    height: 28px;
+
+    border: none;
+
+    border-radius: 8px;
+
+    background: white;
+
+    cursor: pointer;
+
+    font-size: 16px;
+
+    font-weight: 600;
+
+    color: #1f2937;
+
+    box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+
+    transition: all 0.2s ease;
+}
+
+.bottom-zoom button:hover {
+
+    background: #2563eb;
+
+    color: white;
+
+    transform: translateY(-1px);
+}
+
+.bottom-zoom button:active {
+
+    transform: scale(0.96);
+}
+
+/* ======================================================
+   GOTO XY PANEL
+====================================================== */
+
+#gotoPanel {
+
+    position: absolute;
+
+    top: 235px;
+    left: 90px;
+
+    z-index: 1300;
+
+    width: 220px;
+
+    background: rgba(255,255,255,0.96);
+
+    backdrop-filter: blur(12px);
+
+    border-radius: 18px;
+
+    padding: 16px;
+
+    box-shadow: 0 6px 24px rgba(0,0,0,0.18);
+
+    display: none;
+}
+
+.goto-title {
+
+    font-size: 15px;
+
+    font-weight: 700;
+
+    margin-bottom: 12px;
+
+    color: #111827;
+}
+
+#gotoPanel input {
+
+    width: 100%;
+
+    padding: 10px 12px;
+
+    margin-bottom: 10px;
+
+    border: 1px solid #d1d5db;
+
+    border-radius: 10px;
+
+    font-size: 14px;
+
+    box-sizing: border-box;
+}
+
+#gotoPanel button {
+
+    width: 100%;
+
+    padding: 10px;
+
+    border: none;
+
+    border-radius: 10px;
+
+    background: #2563eb;
+
+    color: white;
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition: 0.2s ease;
+}
+
+#gotoPanel button:hover {
+
+    background: #1d4ed8;
+}
+/* ======================================================
+   OPACITY PANEL
+====================================================== */
+
+#opacityPanel {
+
+    position: absolute;
+
+    top: 325px;
+    left: 75px;
+
+    z-index: 1300;
+
+    width: 220px;
+
+    background: rgba(255,255,255,0.96);
+
+    backdrop-filter: blur(12px);
+
+    border-radius: 18px;
+
+    padding: 16px;
+
+    box-shadow: 0 6px 24px rgba(0,0,0,0.18);
+
+    display: none;
+}
+.opacity-title {
+
+    font-size: 15px;
+
+    font-weight: 700;
+
+    margin-bottom: 14px;
+
+    color: #111827;
+}
+
+#opacitySlider {
+
+    width: 100%;
+
+    cursor: pointer;
+}
+
+#opacityValue {
+
+    margin-top: 10px;
+
+    text-align: center;
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+    color: #2563eb;
+}
+/* ======================================================
+   DONATE MODAL
+====================================================== */
+
+#donateModal {
+
+    position: fixed;
+
+    top: 0;
+    left: 0;
+
+    width: 100%;
+    height: 100%;
+
+    z-index: 5000;
+
+    background: rgba(0,0,0,0.45);
+
+    backdrop-filter: blur(4px);
+
+    display: none;
+
+    align-items: center;
+    justify-content: center;
+}
+
+.donate-content {
+
+    position: relative;
+
+    width: 320px;
+
+    background: white;
+
+    border-radius: 24px;
+
+    padding: 28px;
+
+    text-align: center;
+
+    box-shadow: 0 10px 40px rgba(0,0,0,0.25);
+
+    animation: popupFade 0.25s ease;
+}
+
+.donate-content h2 {
+
+    margin-top: 0;
+
+    margin-bottom: 10px;
+
+    font-size: 24px;
+
+    color: #111827;
+}
+
+.donate-content p {
+
+    font-size: 14px;
+
+    color: #6b7280;
+
+    margin-bottom: 20px;
+}
+
+.donate-qr {
+
+    width: 200px;
+
+    border-radius: 14px;
+
+    margin-bottom: 20px;
+}
+
+.donate-btn {
+
+    display: inline-block;
+
+    background: #2563eb;
+
+    color: white;
+
+    text-decoration: none;
+
+    padding: 12px 20px;
+
+    border-radius: 12px;
+
+    font-weight: 600;
+
+    transition: 0.2s ease;
+}
+
+.donate-btn:hover {
+
+    background: #1d4ed8;
+}
+
+.donate-close {
+
+    position: absolute;
+
+    top: 14px;
+    right: 16px;
+
+    cursor: pointer;
+
+    font-size: 18px;
+
+    color: #6b7280;
+}
+
+@keyframes popupFade {
+
+    from {
+
+        transform: scale(0.92);
+
+        opacity: 0;
+    }
+
+    to {
+
+        transform: scale(1);
+
+        opacity: 1;
+    }
+}
+/* ======================================================
+   INTRO MODAL
+====================================================== */
+
+#introModal {
+
+    position: fixed;
+
+    top: 0;
+    left: 0;
+
+    width: 100%;
+    height: 100%;
+
+    z-index: 9999;
+
+    background: rgba(0,0,0,0.55);
+
+    backdrop-filter: blur(6px);
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    padding: 10px;
+
+    box-sizing: border-box;
+}
+
+.intro-content {
+
+    width: 100%;
+    max-width: 650px;
+
+    max-height: 80vh;
+
+    overflow-y: auto;
+
+    background: rgba(255,255,255,0.96);
+
+    backdrop-filter: blur(18px);
+
+    border-radius: 8px;
+
+    padding: 30px;
+
+    text-align: center;
+
+    box-shadow: 0 10px 40px rgba(0,0,0,0.25);
+
+    animation: popupFade 0.3s ease;
+}
+
+.intro-content h1 {
+
+    margin-top: 0;
+
+    margin-bottom: 5px;
+
+    font-size: 25px;
+
+    color: #111827;
+}
+
+.intro-subtitle {
+
+    font-size: 15px;
+
+    line-height: 1.7;
+
+    color: #4b5563;
+
+    margin-bottom: 8px;
+}
+
+.intro-section {
+
+    text-align: center;
+
+    background: #f9fafb;
+
+    padding: 5px;
+
+    border-radius: 8px;
+
+    margin-bottom: 5px;
+}
+
+.intro-section h3 {
+
+    margin-top: 0;
+
+    color: #111827;
+}
+
+.intro-section p {
+
+    font-size: 14px;
+
+    line-height: 1.7;
+
+    color: #4b5563;
+}
+
+.intro-donate {
+
+    margin-bottom: 8px;
+}
+
+.intro-donate img {
+
+    width: 120px;
+
+    border-radius: 8px;
+
+    margin-bottom: 5px;
+}
+
+.intro-donate a {
+
+    display: inline-block;
+
+    background: #2563eb;
+
+    color: white;
+
+    text-decoration: none;
+
+    padding: 10px 10px;
+
+    border-radius: 12px;
+
+    font-weight: 600;
+}
+
+.linkedin-link {
+
+    display: block;
+
+    margin-bottom: 24px;
+
+    color: #2563eb;
+
+    text-decoration: none;
+
+    font-weight: 600;
+}
+
+.intro-content button {
+
+    width: 100%;
+
+    border: none;
+
+    padding: 14px;
+
+    border-radius: 14px;
+
+    background: #111827;
+
+    color: white;
+
+    font-size: 15px;
+
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition: 0.2s ease;
+}
+
+.intro-content button:hover {
+
+    background: #2563eb;
+}
+/* ======================================================
+   INTRO SUPPORT
+====================================================== */
+
+.intro-support-row {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 22px;
+
+    margin-top: 8px;
+
+    margin-bottom: 8px;
+}
+
+.qr-block {
+
+    text-align: center;
+}
+
+.qr-block img {
+
+    width: 105px;
+
+    border-radius: 12px;
+
+    display: block;
+
+    margin-bottom: 6px;
+}
+
+.qr-text {
+
+    font-size: 12px;
+
+    color: #6b7280;
+
+    font-weight: 500;
+}
+
+.support-block {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 12px;
+}
+
+.support-btn {
+
+    display: inline-block;
+
+    background: #2563eb;
+
+    color: white;
+
+    text-decoration: none;
+
+    padding: 12px 18px;
+
+    border-radius: 12px;
+
+    font-weight: 600;
+
+    transition: 0.2s ease;
+}
+
+.support-btn:hover {
+
+    background: #1d4ed8;
+}
+
+.linkedin-link {
+
+    color: #2563eb;
+
+    text-decoration: none;
+
+    font-weight: 600;
+
+    text-align: center;
+
+    margin-bottom: 0;
+}
+/* ======================================================
+   MOBILE
+====================================================== */
+
+@media (max-width: 768px) {
+
+    .map-title {
+
+        left: 10px;
+        right: 10px;
+
+        padding: 14px 18px;
+    }
+
+    .map-title h1 {
+
+        font-size: 18px;
+    }
+
+    .map-title p {
+
+        font-size: 13px;
+    }
+
+    .toolbar-card {
+
+        top: 120px;
+        left: 10px;
+    }
+
+    .layer-panel {
+
+        width: 260px;
+
+        top: auto;
+
+        bottom: 15px;
+
+        right: 10px;
+
+        max-height: 45vh;
+    }
+
+    #coordBar {
+
+        left: 10px;
+
+        bottom: 10px;
+
+        transform: scale(0.92);
+
+        transform-origin: left bottom;
+    }
+}
+
+</style>
+
+</head>
+
+<body>
+
+<!-- =====================================================
+     HEADER
+===================================================== -->
+
+<div class="map-title">
+
+    <h1>Jumaika Agroclimate WebGIS</h1>
+
+    <p>
+        Klasifikasi Iklim Oldeman
+    </p>
+
+</div>
+
+<!-- =====================================================
+     INTRO DISCLAIMER MODAL
+===================================================== -->
+
+<div id="introModal">
+
+    <div class="intro-content">
+
+        <h1>
+            Jumaika Agroclimate WebGIS
+        </h1>
+
+        <p class="intro-subtitle">
+
+            Website ini dikembangkan sebagai pengabdian masyarakat, agar dapat dimanfaatkan oleh semua orang, 
+	    untuk eksplorasi data agroklimat.
+
+        </p>
+
+        <div class="intro-section">
+
+            <h3>Disclaimer</h3>
+
+            <p>
+                Sumber: CHIRPS Curah Hujan bulanan 2015-2025 resolusi spasial ±5 km
+
+            </p>
+
+            <p>
+
+                Data, klasifikasi, dan interpretasi yang
+                ditampilkan pada WebGIS ini bersifat informatif
+                dan eksploratif. Hasil visualisasi tidak menggantikan survei
+                lapangan, pengukuran resmi, maupun rekomendasi
+                institusi terkait.
+
+            </p>
+
+        </div>
+
+<!-- SUPPORT SECTION -->
+
+<div class="intro-support-row">
+
+    <!-- QR -->
+
+    <div class="qr-block">
+
+        <img
+        src="images/qris.jpeg"
+        alt="QRIS">
+
+        <div class="qr-text">
+
+            Scan to Donate
+
+        </div>
+
+    </div>
+
+    <!-- BUTTONS -->
+
+    <div class="support-block">
+
+        <a
+        href="https://trakteer.id/jumaika"
+        target="_blank"
+        class="support-btn">
+
+            Click to Support
+
+        </a>
+
+        <a
+        class="linkedin-link"
+        href="https://www.linkedin.com/in/muhammad-zaki-jumaika-b75361125/"
+        target="_blank">
+
+            LinkedIn Profile
+
+        </a>
+
+    </div>
+
+</div>
+
+        <!-- BUTTON -->
+
+        <button onclick="closeIntroModal()">
+
+            Mengerti & Masuk
+
+        </button>
+
+    </div>
+
+</div>
+<!-- =====================================================
+     MAP
+===================================================== -->
+
+<div id="map"></div>
+
+<!-- =====================================================
+     TOOLBAR
+===================================================== -->
+
+<div class="toolbar-card">
+
+<!-- DONATE -->
+
+<button class="tool-btn"
+title="Donate"
+onclick="openDonate()">
+
+    ❤️
+</button>
+
+<!-- IDENTIFY -->
+
+<button class="tool-btn"
+title="Identify Koordinat"
+onclick="toggleIdentify()">
+
+    ⌖
+</button>
+
+<!-- GOTO XY -->
+
+<button class="tool-btn"
+title="Go To Koordinat"
+onclick="openGotoXY()">
+
+    ◎
+</button>
+
+<!-- MY LOCATION -->
+
+<button class="tool-btn"
+title="Lokasi Saya"
+onclick="locateMe()">
+
+    📍
+</button>
+
+<!-- BASEMAP -->
+
+<button class="tool-btn"
+title="Ganti Basemap"
+onclick="toggleBasemap()">
+
+    🗺
+</button>
+
+<!-- OPACITY -->
+
+<button class="tool-btn"
+title="Opacity Raster"
+onclick="changeOpacity()">
+
+    ◐
+</button>
+
+<!-- FULLSCREEN -->
+
+<button class="tool-btn"
+title="Fullscreen"
+onclick="toggleFullscreen()">
+
+    ⛶
+</button>
+</div>
+<!-- =====================================================
+     GOTO XY PANEL
+===================================================== -->
+
+<div id="gotoPanel">
+
+    <div class="goto-title">
+
+        Go To Koordinat
+
+    </div>
+
+    <input
+    type="number"
+    id="gotoLat"
+    placeholder="Latitude">
+
+    <input
+    type="number"
+    id="gotoLon"
+    placeholder="Longitude">
+
+    <button onclick="submitGotoXY()">
+
+        Go
+
+    </button>
+
+</div>
+<!-- =====================================================
+     OPACITY PANEL
+===================================================== -->
+
+<div id="opacityPanel">
+
+    <div class="opacity-title">
+
+        Opacity Raster
+
+    </div>
+
+    <input
+    type="range"
+    id="opacitySlider"
+    min="0"
+    max="1"
+    step="0.05"
+    value="1">
+
+    <div id="opacityValue">
+
+        100%
+    </div>
+
+</div>
+
+<!-- =====================================================
+     DONATE MODAL
+===================================================== -->
+
+<div id="donateModal">
+
+    <div class="donate-content">
+
+        <div class="donate-close"
+        onclick="closeDonate()">
+
+            ✕
+        </div>
+
+        <h2>Donate to Support</h2>
+
+        <p>
+            Dukung agar Berkembang <br>
+     Scan QR berikut atau klik link dibawah
+        </p>
+
+        <!-- QR -->
+
+        <img
+        src="images/qris.jpeg"
+        alt="QRIS"
+        class="donate-qr">
+
+        <!-- DONATE LINK -->
+
+        <a
+        href="https://trakteer.id/jumaika"
+        target="_blank"
+        class="donate-btn">
+
+            Donate Sekarang
+
+        </a>
+        <p>
+TERIMA KASIH!!
+        </p>
+
+    </div>
+
+</div>
+<!-- =====================================================
+     COORD BAR
+===================================================== -->
+
+<div id="coordBar">
+
+    <div class="coord-text">
+
+        Lat: - | Lon: - | Zoom: -
+
+    </div>
+
+    <div class="bottom-zoom">
+
+        <button onclick="map.zoomIn()">
+
+            +
+        </button>
+
+        <button onclick="map.zoomOut()">
+
+            −
+        </button>
+
+    </div>
+
+</div>
+
+<!-- =====================================================
+     LAYER PANEL
+===================================================== -->
+
+<div class="layer-panel" id="layerPanel">
+
+    <div class="panel-toggle"
+    onclick="togglePanel()">
+
+        «
+    </div>
+
+    <div class="layer-content">
+
+        <!-- BATAS -->
+
+        <div class="layer-item">
+
+            <label class="layer-header">
+
+                <input type="checkbox"
+                id="toggle-boundary"
+                checked>
+
+                Batas Kabupaten/Kota
+
+            </label>
+
+        </div>
+
+        <!-- RERATA CURAH HUJAN -->
+
+        <div class="layer-item active">
+
+            <label class="layer-header">
+
+                <input type="radio"
+                name="raster"
+                checked
+                onclick="activateRaster(
+                    'rainfall',
+                    this.closest('.layer-item')
+                )">
+
+                Rerata Curah Hujan Tahunan
+
+            </label>
+
+            <div class="layer-legend">
+
+                <div class="layer-legend-item">
+                    <div class="layer-legend-color"
+                    style="background:#ff0000"></div>
+                    0–50 mm
+                </div>
+
+                <div class="layer-legend-item">
+                    <div class="layer-legend-color"
+                    style="background:#ff8800"></div>
+                    50–100 mm
+                </div>
+
+                <div class="layer-legend-item">
+                    <div class="layer-legend-color"
+                    style="background:#ffee00"></div>
+                    100–200 mm
+                </div>
+
+                <div class="layer-legend-item">
+                    <div class="layer-legend-color"
+                    style="background:#00ff00"></div>
+                    200–300 mm
+                </div>
+
+                <div class="layer-legend-item">
+                    <div class="layer-legend-color"
+                    style="background:#0000ff"></div>
+                    >300 mm
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- BULAN BASAH -->
+
+        <div class="layer-item">
+
+            <label class="layer-header">
+
+                <input type="radio"
+                name="raster"
+                onclick="activateRaster(
+                    'wetmonth',
+                    this.closest('.layer-item')
+                )">
+
+                Rerata Bulan Basah
+
+            </label>
+
+            <div class="layer-legend">
+
+                <div class="layer-legend-item">
+                    <div class="layer-legend-color"
+                    style="background:#c0e6bc"></div>
+                    0–2 bulan
+                </div>
+
+                <div class="layer-legend-item">
+                    <div class="layer-legend-color"
+                    style="background:#81ceb9"></div>
+                    2–4 bulan
+                </div>
+
+                <div class="layer-legend-item">
+                    <div class="layer-legend-color"
+                    style="background:#41b6c4"></div>
+                    4–6 bulan
+                </div>
+
+                <div class="layer-legend-item">
+                    <div class="layer-legend-color"
+                    style="background:#3391bc"></div>
+                    6–8 bulan
+                </div>
+
+                <div class="layer-legend-item">
+                    <div class="layer-legend-color"
+                    style="background:#2a66ac"></div>
+                    8–10 bulan
+                </div>
+
+                <div class="layer-legend-item">
+                    <div class="layer-legend-color"
+                    style="background:#253494"></div>
+                    10–12 bulan
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- BULAN KERING -->
+
+        <div class="layer-item">
+
+            <label class="layer-header">
+
+                <input type="radio"
+                name="raster"
+                onclick="activateRaster(
+                    'drymonth',
+                    this.closest('.layer-item')
+                )">
+
+                Rerata Bulan Kering
+
+            </label>
+
+            <div class="layer-legend">
+
+                <div class="layer-legend-item">
+                    <div class="layer-legend-color"
+                    style="background:#fedd79"></div>
+                    0–2 bulan
+                </div>
+
+                <div class="layer-legend-item">
+                    <div class="layer-legend-color"
+                    style="background:#feb751"></div>
+                    2–4 bulan
+                </div>
+
+                <div class="layer-legend-item">
+                    <div class="layer-legend-color"
+                    style="background:#fd8d3c"></div>
+                    4–6 bulan
+                </div>
+
+                <div class="layer-legend-item">
+                    <div class="layer-legend-color"
+                    style="background:#f45629"></div>
+                    6–8 bulan
+                </div>
+
+                <div class="layer-legend-item">
+                    <div class="layer-legend-color"
+                    style="background:#df2722"></div>
+                    8–10 bulan
+                </div>
+
+                <div class="layer-legend-item">
+                    <div class="layer-legend-color"
+                    style="background:#bd0026"></div>
+                    10–12 bulan
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- BULAN BASAH BERTURUT -->
+
+        <div class="layer-item">
+
+            <label class="layer-header">
+
+                <input type="radio"
+                name="raster"
+                onclick="activateRaster(
+                    'wetconsecutive',
+                    this.closest('.layer-item')
+                )">
+
+                Bulan Basah Berturut
+
+            </label>
+
+            <div class="layer-legend">
+
+                <div class="layer-legend-item">
+                    <div class="layer-legend-color"
+                    style="background:#edf8fb"></div>
+                    0–2 bulan
+                </div>
+
+                <div class="layer-legend-item">
+                    <div class="layer-legend-color"
+                    style="background:#99d8c9"></div>
+                    4–6 bulan
+                </div>
+
+                <div class="layer-legend-item">
+                    <div class="layer-legend-color"
+                    style="background:#006d2c"></div>
+                    10–12 bulan
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- BULAN KERING BERTURUT -->
+
+        <div class="layer-item">
+
+            <label class="layer-header">
+
+                <input type="radio"
+                name="raster"
+                onclick="activateRaster(
+                    'dryconsecutive',
+                    this.closest('.layer-item')
+                )">
+
+                Bulan Kering Berturut
+
+            </label>
+
+            <div class="layer-legend">
+
+                <div class="layer-legend-item">
+                    <div class="layer-legend-color"
+                    style="background:#f2f0f7"></div>
+                    0–2 bulan
+                </div>
+
+                <div class="layer-legend-item">
+                    <div class="layer-legend-color"
+                    style="background:#9e9ac8"></div>
+                    6–8 bulan
+                </div>
+
+                <div class="layer-legend-item">
+                    <div class="layer-legend-color"
+                    style="background:#54278f"></div>
+                    10–12 bulan
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- OLDEMAN -->
+
+        <div class="layer-item">
+
+            <label class="layer-header">
+
+                <input type="radio"
+                name="raster"
+                onclick="activateRaster(
+                    'oldeman',
+                    this.closest('.layer-item')
+                )">
+
+                Klasifikasi Iklim Oldeman
+
+            </label>
+
+            <div class="layer-legend">
+
+                <div class="layer-legend-item">
+                    <div class="layer-legend-color"
+                    style="background:#0000ff"></div>
+                    Sangat Basah
+                </div>
+
+                <div class="layer-legend-item">
+                    <div class="layer-legend-color"
+                    style="background:#00ffff"></div>
+                    Basah
+                </div>
+
+                <div class="layer-legend-item">
+                    <div class="layer-legend-color"
+                    style="background:#00ff00"></div>
+                    Sedang
+                </div>
+
+                <div class="layer-legend-item">
+                    <div class="layer-legend-color"
+                    style="background:#ffff00"></div>
+                    Agak Kering
+                </div>
+
+                <div class="layer-legend-item">
+                    <div class="layer-legend-color"
+                    style="background:#ff0000"></div>
+                    Kering
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script src="js/leaflet.js"></script>
+<script src="js/leaflet-hash.js"></script>
+<script src="js/leaflet-measure.js"></script>
+
+<script src="data/Batas_Kab_Kot_6.js"></script>
+
+<script>
+
+/* ======================================================
+   MAP
+====================================================== */
+
+var map = L.map('map', {
+
+    zoomControl: false,
+
+    attributionControl: false,
+
+    minZoom: 4,
+
+    maxZoom: 18
+
+})
+.fitBounds([
+    [-11.1,94.9],
+    [5.9,141.1]
+]);
+
+new L.Hash(map);
+
+/* ======================================================
+   BASEMAP
+====================================================== */
+
+let osm = L.tileLayer(
+'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
+).addTo(map);
+
+let satellite = L.tileLayer(
+'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'
+);
+
+let satelliteMode = false;
+
+/* ======================================================
+   RASTER
+====================================================== */
+
+var bounds = [[-11.1,94.9],[5.9,141.1]];
+
+var layer_mean_rainfall_5 = L.imageOverlay(
+'data/mean_rainfall_5.png',
+bounds
+);
+
+var layer_wet_month_mean_4 = L.imageOverlay(
+'data/wet_month_mean_4.png',
+bounds
+);
+
+var layer_dry_month_mean_3 = L.imageOverlay(
+'data/dry_month_mean_3.png',
+bounds
+);
+
+var layer_wet_consecutive_mean_2 = L.imageOverlay(
+'data/wet_consecutive_mean_2.png',
+bounds
+);
+
+var layer_dry_consecutive_mean_1 = L.imageOverlay(
+'data/dry_consecutive_mean_1.png',
+bounds
+);
+
+var layer_true_oldeman_class_0 = L.imageOverlay(
+'data/true_oldeman_class_0.png',
+bounds
+);
+/* ======================================================
+   VECTOR
+====================================================== */
+
+function popupKabupaten(feature, layer) {
+
+    layer.on({
+
+        mouseover: function(e) {
+
+            e.target.setStyle({
+                weight: 2,
+                color: '#2563eb'
+            });
+
+            e.target.openPopup();
+        },
+
+        mouseout: function(e) {
+
+            geojson.resetStyle(e.target);
+
+            e.target.closePopup();
+        }
+    });
+
+    layer.bindPopup(`
+
+        <div class="popup-title">
+
+            ${feature.properties.KABKOT}
+
+        </div>
+
+        Kabupaten/Kota
+
+    `);
+}
+
+var geojson = L.geoJson(json_Batas_Kab_Kot_6, {
+
+    style: {
+
+        color: '#1f2937',
+
+        weight: 1,
+
+        fillOpacity: 0
+    },
+
+    onEachFeature: popupKabupaten
+
+}).addTo(map);
+
+/* ======================================================
+   RASTER MANAGER
+====================================================== */
+
+const rasterLayers = {
+
+    rainfall: layer_mean_rainfall_5,
+
+    wetmonth: layer_wet_month_mean_4,
+
+    drymonth: layer_dry_month_mean_3,
+
+    wetconsecutive: layer_wet_consecutive_mean_2,
+
+    dryconsecutive: layer_dry_consecutive_mean_1,
+
+    oldeman: layer_true_oldeman_class_0
+};
+
+function activateRaster(type, element = null) {
+
+    Object.values(rasterLayers).forEach(layer => {
+
+        map.removeLayer(layer);
+    });
+
+    rasterLayers[type].addTo(map);
+
+    document
+    .querySelectorAll('.layer-item')
+    .forEach(item => {
+
+        item.classList.remove('active');
+    });
+
+    if(element) {
+
+        element.classList.add('active');
+    }
+}
+
+/* ======================================================
+   DEFAULT
+====================================================== */
+
+activateRaster(
+    'rainfall',
+    document.querySelector('.layer-item.active')
+);
+
+/* ======================================================
+   BOUNDARY TOGGLE
+====================================================== */
+
+document
+.getElementById('toggle-boundary')
+.addEventListener('change', function() {
+
+    if(this.checked) {
+
+        geojson.addTo(map);
+
+    } else {
+
+        map.removeLayer(geojson);
+    }
+});
+
+/* ======================================================
+   PANEL TOGGLE
+====================================================== */
+
+function togglePanel() {
+
+    const panel =
+    document.getElementById('layerPanel');
+
+    const toggle =
+    document.querySelector('.panel-toggle');
+
+    panel.classList.toggle('collapsed');
+
+    if(panel.classList.contains('collapsed')) {
+
+        toggle.innerHTML = '»';
+
+    } else {
+
+        toggle.innerHTML = '«';
+    }
+}
+
+/* ======================================================
+   IDENTIFY
+====================================================== */
+
+let identifyMode = false;
+
+function toggleIdentify() {
+
+    identifyMode = !identifyMode;
+
+    const identifyBtn =
+    document.querySelector(
+        '[title="Identify Koordinat"]'
+    );
+
+    if(identifyMode) {
+
+        /* BUTTON ACTIVE */
+
+        identifyBtn.style.background =
+        '#2563eb';
+
+        identifyBtn.style.color =
+        'white';
+
+        /* CURSOR */
+
+        document.getElementById('map')
+        .style.cursor = 'crosshair';
+
+    } else {
+
+        /* BUTTON NORMAL */
+
+        identifyBtn.style.background =
+        'white';
+
+        identifyBtn.style.color =
+        '#111827';
+
+        /* CURSOR NORMAL */
+
+        document.getElementById('map')
+        .style.cursor = '';
+    }
+}
+/* ======================================================
+   GOTO XY
+====================================================== */
+
+function openGotoXY() {
+
+    const panel =
+    document.getElementById('gotoPanel');
+
+    if(panel.style.display === 'block') {
+
+        panel.style.display = 'none';
+
+    } else {
+
+        panel.style.display = 'block';
+    }
+}
+
+function submitGotoXY() {
+
+    const lat = parseFloat(
+        document.getElementById('gotoLat').value
+    );
+
+    const lon = parseFloat(
+        document.getElementById('gotoLon').value
+    );
+
+    if(isNaN(lat) || isNaN(lon)) {
+
+        alert('Koordinat tidak valid');
+
+        return;
+    }
+
+    map.setView([lat, lon], 10);
+
+    L.marker([lat, lon])
+
+    .addTo(map)
+
+    .bindPopup(`
+        Latitude: ${lat}<br>
+        Longitude: ${lon}
+    `)
+
+    .openPopup();
+
+    document.getElementById('gotoPanel')
+    .style.display = 'none';
+}
+
+/* ======================================================
+   MY LOCATION
+====================================================== */
+
+function locateMe() {
+
+    map.locate({
+
+        setView:true,
+
+        maxZoom:12
+    });
+}
+
+map.on('locationfound', function(e) {
+
+    L.marker(e.latlng)
+
+    .addTo(map)
+
+    .bindPopup('Lokasi Anda')
+
+    .openPopup();
+});
+
+/* ======================================================
+   BASEMAP SWITCH
+====================================================== */
+
+function toggleBasemap() {
+
+    if(satelliteMode) {
+
+        map.removeLayer(satellite);
+
+        osm.addTo(map);
+
+    } else {
+
+        map.removeLayer(osm);
+
+        satellite.addTo(map);
+    }
+
+    satelliteMode = !satelliteMode;
+}
+
+/* ======================================================
+   OPACITY
+====================================================== */
+
+function changeOpacity() {
+
+    const panel =
+    document.getElementById('opacityPanel');
+
+    if(panel.style.display === 'block') {
+
+        panel.style.display = 'none';
+
+    } else {
+
+        panel.style.display = 'block';
+    }
+}
+
+/* ======================================================
+   OPACITY SLIDER
+====================================================== */
+
+document
+.getElementById('opacitySlider')
+
+.addEventListener('input', function() {
+
+    const opacity =
+    parseFloat(this.value);
+
+    Object.values(rasterLayers)
+    .forEach(layer => {
+
+        layer.setOpacity(opacity);
+    });
+
+    document
+    .getElementById('opacityValue')
+    .innerHTML = Math.round(opacity * 100) + '%';
+});
+
+/* ======================================================
+   FULLSCREEN
+====================================================== */
+
+function toggleFullscreen() {
+
+    if(!document.fullscreenElement) {
+
+        document.documentElement
+        .requestFullscreen();
+
+    } else {
+
+        document.exitFullscreen();
+    }
+}
+
+/* ======================================================
+   DONATE
+====================================================== */
+
+function openDonate() {
+
+    document
+    .getElementById('donateModal')
+    .style.display = 'flex';
+}
+
+function closeDonate() {
+
+    document
+    .getElementById('donateModal')
+    .style.display = 'none';
+}
+/* ======================================================
+   MAP CLICK IDENTIFY
+====================================================== */
+
+map.on('click', function(e) {
+
+    if(!identifyMode) return;
+
+    L.popup()
+
+    .setLatLng(e.latlng)
+
+    .setContent(`
+
+        <div style="font-size:14px">
+
+            <b>Koordinat Lokasi</b>
+
+            <br><br>
+
+            Latitude:
+            ${e.latlng.lat.toFixed(5)}
+
+            <br>
+
+            Longitude:
+            ${e.latlng.lng.toFixed(5)}
+
+        </div>
+
+    `)
+
+    .openOn(map);
+});
+/* ======================================================
+   COORD BAR
+====================================================== */
+
+map.on('mousemove', function(e) {
+
+    document.querySelector('.coord-text')
+    .innerHTML = `
+
+        Lat:
+        ${e.latlng.lat.toFixed(5)}
+
+        |
+
+        Lon:
+        ${e.latlng.lng.toFixed(5)}
+
+        |
+
+        Zoom:
+        ${map.getZoom()}
+
+    `;
+});
+
+/* ======================================================
+   INTRO MODAL
+====================================================== */
+
+function closeIntroModal() {
+
+    document
+    .getElementById('introModal')
+    .style.display = 'none';
+}
+</script>
+
+</body>
+</html>
