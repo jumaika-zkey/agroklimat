@@ -6,8 +6,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-<meta name="viewport"
-content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>Jumaika Agroclimate WebGIS</title>
 <meta name="description"
@@ -21,12 +20,26 @@ content="Muhammad Zaki Jumaika">
 
 <meta name="robots"
 content="index, follow">
-
+<meta property="og:title" content="Jumaika Agroclimate WebGIS">
+<meta property="og:description" content="Visualisasi spasial agroklimat Indonesia berbasis CHIRPS dan Klasifikasi Iklim Oldeman.">
+<meta property="og:image" content="images/logo-atau-preview-webgis.png"> <!-- Siapkan gambar preview -->
+<meta property="og:url" content="https://jumaika-zkey.github.io/agroklimat/">
+<meta property="og:type" content="website">
 <link rel="stylesheet" href="css/leaflet.css">
 <link rel="stylesheet" href="css/leaflet-measure.css">
 
 <style>
-
+.visually-hidden {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    padding: 0 !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    clip: rect(0, 0, 0, 0) !important;
+    white-space: nowrap !important;
+    border: 0 !important;
+}
 /* ======================================================
    GLOBAL
 ====================================================== */
@@ -2751,7 +2764,10 @@ document.addEventListener('click', function(e) {
 });
 
 </script>
-	<div style="display:none">
+<!-- =====================================================
+     SEO HIDDEN CONTENT (VISUALLY HIDDEN)
+===================================================== -->
+	<div class="visually-hidden">
 
 <h2>Klasifikasi Iklim Oldeman</h2>
 <p>
@@ -2770,7 +2786,6 @@ dan stasiun observasi.
 WebGIS digunakan untuk visualisasi curah hujan,
 bulan basah, bulan kering, dan klasifikasi agroklimat.
 </p>
-
 </div>
 </body>
 </html>
