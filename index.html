@@ -1011,8 +1011,9 @@ body {
 
     position: absolute;
 
-    right: 15px;
-    bottom: 15px;
+left: 50%;
+transform: translateX(-50%);
+bottom: 15px;
 
     z-index: 1400;
 
@@ -1292,7 +1293,6 @@ body {
         </p>
 
     </div>
-
     <!-- =====================================================
          SUPPORT SECTION
     ===================================================== -->
@@ -1350,7 +1350,7 @@ body {
     </button>
 
 </div>
-
+</div>
 <!-- =====================================================
      SEO INFORMATION DOCK
 ===================================================== -->
@@ -2471,6 +2471,12 @@ function closeIntroModal() {
     document
     .getElementById('introModal')
     .style.display = 'none';
+
+    setTimeout(function() {
+
+        map.invalidateSize();
+
+    }, 200);
 }
 
 	/* ======================================================
@@ -2739,8 +2745,9 @@ document.addEventListener('click', function(e) {
         panel.style.display = 'none';
     }
 });
+
 </script>
-<div style="display:none">
+	<div style="display:none">
 
 <h2>Klasifikasi Iklim Oldeman</h2>
 <p>
