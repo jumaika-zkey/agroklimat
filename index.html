@@ -2639,13 +2639,19 @@ lebih mudah diakses secara terbuka.
 
 function openInfo(type) {
 
-    document
-    .getElementById('infoPanel')
-    .style.display = 'block';
+    const panel =
+    document.getElementById('infoPanel');
 
-    document
-    .getElementById('infoContent')
-    .innerHTML = infoData[type];
+    const content =
+    document.getElementById('infoContent');
+
+    panel.style.display = 'block';
+
+    content.innerHTML = infoData[type];
+
+    /* AUTO SCROLL KE ATAS */
+
+    panel.scrollTop = 0;
 }
 
 /* ======================================================
@@ -2658,6 +2664,33 @@ function closeInfo() {
     .getElementById('infoPanel')
     .style.display = 'none';
 }
+	/* ======================================================
+   AUTO CLOSE INFO PANEL
+====================================================== */
+
+document.addEventListener('click', function(e) {
+
+    const panel =
+    document.getElementById('infoPanel');
+
+    const dock =
+    document.getElementById('infoDock');
+
+    /* JIKA PANEL TIDAK AKTIF */
+
+    if(panel.style.display !== 'block') return;
+
+    /* CEK KLIK DI LUAR */
+
+    if(
+        !panel.contains(e.target)
+        &&
+        !dock.contains(e.target)
+    ) {
+
+        panel.style.display = 'none';
+    }
+});
 </script>
 <div style="display:none">
 
