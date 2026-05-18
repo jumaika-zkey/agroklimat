@@ -1066,7 +1066,17 @@ body {
 /* ======================================================
    INFO PANEL
 ====================================================== */
+#infoPanel::-webkit-scrollbar {
 
+    width: 5px;
+}
+
+#infoPanel::-webkit-scrollbar-thumb {
+
+    background: #cbd5e1;
+
+    border-radius: 10px;
+}
 #infoPanel {
 
     position: absolute;
@@ -1296,11 +1306,12 @@ body {
 <!-- =====================================================
      SEO INFORMATION DOCK
 ===================================================== -->
-
+<section id="seo-information">
 <div id="infoDock">
 
-    <button class="info-btn"
-    onclick="openInfo('oldeman')">
+<button class="info-btn"
+onclick="openInfo('oldeman')"
+aria-label="Informasi klasifikasi iklim Oldeman">
 
         🌾 Oldeman
     </button>
@@ -1336,7 +1347,7 @@ body {
     </button>
 
 </div>
-
+</section>
 <!-- =====================================================
      INFO PANEL
 ===================================================== -->
@@ -2648,6 +2659,26 @@ function closeInfo() {
     .style.display = 'none';
 }
 </script>
+<div style="display:none">
 
+<h2>Klasifikasi Iklim Oldeman</h2>
+<p>
+Klasifikasi iklim Oldeman digunakan untuk evaluasi
+agroklimat berdasarkan bulan basah dan bulan kering.
+</p>
+
+<h2>Data CHIRPS Indonesia</h2>
+<p>
+CHIRPS merupakan dataset curah hujan berbasis satelit
+dan stasiun observasi.
+</p>
+
+<h2>WebGIS Agroklimat Indonesia</h2>
+<p>
+WebGIS digunakan untuk visualisasi curah hujan,
+bulan basah, bulan kering, dan klasifikasi agroklimat.
+</p>
+
+</div>
 </body>
 </html>
