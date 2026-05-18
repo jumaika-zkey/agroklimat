@@ -1002,6 +1002,176 @@ body {
 
     margin-bottom: 0;
 }
+
+	/* ======================================================
+   INFO DOCK
+====================================================== */
+
+#infoDock {
+
+    position: absolute;
+
+    right: 15px;
+    bottom: 15px;
+
+    z-index: 1400;
+
+    display: flex;
+
+    gap: 8px;
+
+    align-items: center;
+
+    overflow-x: auto;
+
+    max-width: calc(100% - 20px);
+}
+
+.info-btn {
+
+    border: none;
+
+    background: rgba(255,255,255,0.95);
+
+    backdrop-filter: blur(12px);
+
+    border-radius: 14px;
+
+    padding: 10px 14px;
+
+    cursor: pointer;
+
+    white-space: nowrap;
+
+    font-size: 13px;
+
+    font-weight: 600;
+
+    color: #1f2937;
+
+    box-shadow: 0 4px 14px rgba(0,0,0,0.14);
+
+    transition: all 0.2s ease;
+}
+
+.info-btn:hover {
+
+    background: #2563eb;
+
+    color: white;
+
+    transform: translateY(-2px);
+}
+
+/* ======================================================
+   INFO PANEL
+====================================================== */
+
+#infoPanel {
+
+    position: absolute;
+
+    right: 15px;
+    bottom: 70px;
+
+    width: 360px;
+
+    max-height: 45vh;
+
+    overflow-y: auto;
+
+    z-index: 1500;
+
+    background: rgba(255,255,255,0.97);
+
+    backdrop-filter: blur(18px);
+
+    border-radius: 22px;
+
+    padding: 24px;
+
+    box-shadow: 0 8px 30px rgba(0,0,0,0.22);
+
+    display: none;
+
+    animation: popupFade 0.25s ease;
+}
+
+#infoClose {
+
+    position: absolute;
+
+    top: 14px;
+    right: 16px;
+
+    cursor: pointer;
+
+    font-size: 18px;
+
+    color: #6b7280;
+}
+
+#infoContent h2 {
+
+    margin-top: 0;
+
+    margin-bottom: 10px;
+
+    font-size: 22px;
+
+    color: #111827;
+}
+
+#infoContent h3 {
+
+    margin-top: 20px;
+
+    margin-bottom: 8px;
+
+    font-size: 16px;
+
+    color: #1f2937;
+}
+
+#infoContent p {
+
+    font-size: 14px;
+
+    line-height: 1.8;
+
+    color: #4b5563;
+}
+
+/* ======================================================
+   MOBILE INFO
+====================================================== */
+
+@media (max-width: 768px) {
+
+    #infoDock {
+
+        left: 10px;
+
+        right: 10px;
+
+        bottom: 10px;
+
+        padding-bottom: 2px;
+    }
+
+    #infoPanel {
+
+        left: 10px;
+
+        right: 10px;
+
+        width: auto;
+
+        bottom: 65px;
+
+        max-height: 50vh;
+    }
+}
 /* ======================================================
    MOBILE
 ====================================================== */
@@ -1091,8 +1261,8 @@ body {
 
         <p class="intro-subtitle">
 
-            Website ini dikembangkan sebagai pengabdian masyarakat, agar dapat dimanfaatkan oleh semua orang, 
-	    untuk eksplorasi data agroklimat.
+            Website ini dikembangkan sebagai pengabdian masyarakat
+            untuk eksplorasi data agroklimat Indonesia berbasis CHIRPS.
 
         </p>
 
@@ -1101,69 +1271,17 @@ body {
             <h3>Disclaimer</h3>
 
             <p>
-                Sumber: CHIRPS Curah Hujan bulanan 2015-2025 resolusi spasial ±5 km
-
+                Sumber data menggunakan CHIRPS Curah Hujan Bulanan
+                periode 2015–2025 resolusi spasial ±5 km.
             </p>
 
             <p>
-
-                Data, klasifikasi, dan interpretasi yang
-                ditampilkan pada WebGIS ini bersifat informatif
-                dan eksploratif. Hasil visualisasi tidak menggantikan survei
-                lapangan, pengukuran resmi, maupun rekomendasi
-                institusi terkait.
-
+                Data dan interpretasi bersifat informatif,
+                eksploratif, dan tidak menggantikan survei lapangan
+                maupun rekomendasi institusi resmi.
             </p>
 
         </div>
-
-<!-- SUPPORT SECTION -->
-
-<div class="intro-support-row">
-
-    <!-- QR -->
-
-    <div class="qr-block">
-
-        <img
-        src="images/qris.jpeg"
-        alt="QRIS">
-
-        <div class="qr-text">
-
-            Scan to Donate
-
-        </div>
-
-    </div>
-
-    <!-- BUTTONS -->
-
-    <div class="support-block">
-
-        <a
-        href="https://trakteer.id/jumaika"
-        target="_blank"
-        class="support-btn">
-
-            Click to Support
-
-        </a>
-
-        <a
-        class="linkedin-link"
-        href="https://www.linkedin.com/in/muhammad-zaki-jumaika-b75361125/"
-        target="_blank">
-
-            LinkedIn Profile
-
-        </a>
-
-    </div>
-
-</div>
-
-        <!-- BUTTON -->
 
         <button onclick="closeIntroModal()">
 
@@ -1172,6 +1290,66 @@ body {
         </button>
 
     </div>
+
+</div>
+
+<!-- =====================================================
+     SEO INFORMATION DOCK
+===================================================== -->
+
+<div id="infoDock">
+
+    <button class="info-btn"
+    onclick="openInfo('oldeman')">
+
+        🌾 Oldeman
+    </button>
+
+    <button class="info-btn"
+    onclick="openInfo('rainfall')">
+
+        🌧 Hujan
+    </button>
+
+    <button class="info-btn"
+    onclick="openInfo('mapguide')">
+
+        🗺 Peta
+    </button>
+
+    <button class="info-btn"
+    onclick="openInfo('benefit')">
+
+        📈 Manfaat
+    </button>
+
+    <button class="info-btn"
+    onclick="openInfo('chirps')">
+
+        ☁ CHIRPS
+    </button>
+
+    <button class="info-btn"
+    onclick="openInfo('developer')">
+
+        👤 Developer
+    </button>
+
+</div>
+
+<!-- =====================================================
+     INFO PANEL
+===================================================== -->
+
+<div id="infoPanel">
+
+    <div id="infoClose"
+    onclick="closeInfo()">
+
+        ✕
+    </div>
+
+    <div id="infoContent"></div>
 
 </div>
 <!-- =====================================================
@@ -2233,6 +2411,240 @@ function closeIntroModal() {
 
     document
     .getElementById('introModal')
+    .style.display = 'none';
+}
+
+	/* ======================================================
+   SEO INFORMATION CONTENT
+====================================================== */
+
+const infoData = {
+
+oldeman: `
+
+<h2>
+Apa Itu Klasifikasi Oldeman?
+</h2>
+
+<p>
+Klasifikasi iklim Oldeman adalah sistem klasifikasi
+agroklimat yang dikembangkan berdasarkan jumlah
+bulan basah dan bulan kering berturut-turut.
+Sistem ini banyak digunakan di Indonesia untuk
+evaluasi pola tanam dan perencanaan pertanian.
+</p>
+
+<h3>
+Bulan Basah dan Bulan Kering
+</h3>
+
+<p>
+Bulan basah umumnya memiliki curah hujan lebih dari
+200 mm per bulan, sedangkan bulan kering memiliki
+curah hujan kurang dari 100 mm per bulan.
+</p>
+
+<h3>
+Manfaat Oldeman
+</h3>
+
+<p>
+Klasifikasi Oldeman digunakan untuk membantu
+identifikasi kesesuaian pola tanam padi,
+palawija, dan sistem pertanian lahan kering.
+</p>
+`,
+
+rainfall: `
+
+<h2>
+Curah Hujan Indonesia
+</h2>
+
+<p>
+Indonesia merupakan negara tropis dengan distribusi
+curah hujan yang sangat bervariasi dipengaruhi oleh
+monsun, topografi, dan dinamika atmosfer regional.
+</p>
+
+<h3>
+Distribusi Curah Hujan
+</h3>
+
+<p>
+Wilayah Indonesia bagian barat umumnya memiliki
+curah hujan lebih tinggi dibanding wilayah timur,
+meskipun variasi lokal sangat dipengaruhi kondisi
+topografi dan kedekatan terhadap laut.
+</p>
+
+<h3>
+Pentingnya Informasi Curah Hujan
+</h3>
+
+<p>
+Informasi curah hujan penting untuk pertanian,
+pengelolaan sumber daya air, mitigasi bencana,
+dan analisis perubahan iklim.
+</p>
+`,
+
+mapguide: `
+
+<h2>
+Cara Membaca Peta WebGIS
+</h2>
+
+<p>
+Peta WebGIS ini menampilkan data raster agroklimat
+Indonesia berbasis CHIRPS dengan beberapa layer
+visualisasi tematik.
+</p>
+
+<h3>
+Interpretasi Warna
+</h3>
+
+<p>
+Warna merah umumnya menunjukkan kondisi lebih
+kering, sedangkan warna hijau hingga biru
+menunjukkan kondisi lebih basah.
+</p>
+
+<h3>
+Navigasi Peta
+</h3>
+
+<p>
+Pengguna dapat memperbesar peta, mengganti
+basemap, mengatur opacity raster,
+dan melakukan identifikasi koordinat.
+</p>
+`,
+
+benefit: `
+
+<h2>
+Manfaat WebGIS Agroklimat
+</h2>
+
+<p>
+WebGIS agroklimat dapat digunakan sebagai alat
+eksplorasi spasial untuk memahami distribusi
+iklim dan pola curah hujan di Indonesia.
+</p>
+
+<h3>
+Aplikasi Pertanian
+</h3>
+
+<p>
+Data agroklimat dapat membantu evaluasi pola tanam,
+perencanaan pertanian, dan pengelolaan lahan.
+</p>
+
+<h3>
+Pendidikan dan Penelitian
+</h3>
+
+<p>
+Platform ini juga dapat digunakan untuk pendidikan,
+penelitian, dan pengembangan sistem informasi
+geospasial agroklimat.
+</p>
+`,
+
+chirps: `
+
+<h2>
+Apa Itu CHIRPS?
+</h2>
+
+<p>
+CHIRPS atau Climate Hazards Group InfraRed
+Precipitation with Station Data merupakan dataset
+curah hujan global berbasis kombinasi data satelit
+dan stasiun pengamatan.
+</p>
+
+<h3>
+Resolusi dan Periode
+</h3>
+
+<p>
+Dataset CHIRPS memiliki resolusi spasial tinggi
+dan banyak digunakan untuk analisis iklim,
+hidrologi, dan agroklimat.
+</p>
+
+<h3>
+Pemanfaatan CHIRPS
+</h3>
+
+<p>
+CHIRPS digunakan secara luas dalam pemantauan
+kekeringan, analisis curah hujan,
+dan sistem informasi iklim.
+</p>
+`,
+
+developer: `
+
+<h2>
+Tentang Developer
+</h2>
+
+<p>
+Jumaika Agroclimate WebGIS dikembangkan oleh
+Muhammad Zaki Jumaika sebagai media eksplorasi
+data agroklimat Indonesia berbasis WebGIS.
+</p>
+
+<h3>
+Bidang Pengembangan
+</h3>
+
+<p>
+Pengembangan berfokus pada integrasi ilmu tanah,
+agroklimat, penginderaan jauh,
+dan sistem informasi geospasial.
+</p>
+
+<h3>
+Tujuan Pengembangan
+</h3>
+
+<p>
+Platform ini dikembangkan sebagai bentuk
+pengabdian masyarakat agar data agroklimat
+lebih mudah diakses secara terbuka.
+</p>
+`
+};
+
+/* ======================================================
+   OPEN INFO
+====================================================== */
+
+function openInfo(type) {
+
+    document
+    .getElementById('infoPanel')
+    .style.display = 'block';
+
+    document
+    .getElementById('infoContent')
+    .innerHTML = infoData[type];
+}
+
+/* ======================================================
+   CLOSE INFO
+====================================================== */
+
+function closeInfo() {
+
+    document
+    .getElementById('infoPanel')
     .style.display = 'none';
 }
 </script>
