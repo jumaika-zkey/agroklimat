@@ -1011,9 +1011,9 @@ body {
 
     position: absolute;
 
-left: 50%;
-transform: translateX(-50%);
-bottom: 15px;
+    right: 15px;
+
+    bottom: 15px;
 
     z-index: 1400;
 
@@ -1159,16 +1159,20 @@ bottom: 15px;
 
 @media (max-width: 768px) {
 
-    #infoDock {
+#infoDock {
 
-        left: 10px;
+    right: 10px;
 
-        right: 10px;
+    left: auto;
 
-        bottom: 10px;
+    bottom: 10px;
 
-        padding-bottom: 2px;
-    }
+    transform: none;
+
+    max-width: calc(100% - 20px);
+
+    padding-bottom: 2px;
+}
 
     #infoPanel {
 
