@@ -1017,8 +1017,7 @@ body {
 
     margin-bottom: 0;
 }
-
-	/* ======================================================
+/* ======================================================
    INFO DOCK
 ====================================================== */
 
@@ -1172,7 +1171,15 @@ body {
    MOBILE INFO
 ====================================================== */
 
+/* ======================================================
+   MOBILE RESPONSIVE FIX
+====================================================== */
+
 @media (max-width: 768px) {
+
+    /* =========================================
+       HEADER
+    ========================================= */
 
     .map-title {
 
@@ -1192,6 +1199,10 @@ body {
         font-size: 13px;
     }
 
+    /* =========================================
+       TOOLBAR
+    ========================================= */
+
     .toolbar-card {
 
         top: 120px;
@@ -1199,7 +1210,7 @@ body {
     }
 
     /* =========================================
-       LEGEND / LAYER PANEL MOBILE FIX
+       LAYER PANEL
     ========================================= */
 
     .layer-panel {
@@ -1230,15 +1241,108 @@ body {
         bottom: auto;
     }
 
-    #coordBar {
+    /* =========================================
+       INFO BUTTON DOCK
+    ========================================= */
+
+    #infoDock {
 
         left: 10px;
 
+        right: 10px;
+
         bottom: 10px;
 
-        transform: scale(0.92);
+        z-index: 1400;
 
-        transform-origin: left bottom;
+        display: flex;
+
+        gap: 8px;
+
+        overflow-x: auto;
+
+        padding-bottom: 2px;
+    }
+
+    /* =========================================
+       INFO PANEL
+    ========================================= */
+
+    #infoPanel {
+
+        left: 10px;
+
+        right: 10px;
+
+        width: auto;
+
+        top: 250px;
+
+        bottom: 110px;
+
+        max-height: none;
+
+        border-radius: 24px;
+
+        padding: 20px;
+    }
+
+    /* =========================================
+       COORD BAR
+    ========================================= */
+
+    #coordBar {
+
+        position: absolute;
+
+        left: 10px;
+
+        right: 10px;
+
+        bottom: 72px;
+
+        z-index: 1600;
+
+        background: transparent;
+
+        backdrop-filter: none;
+
+        box-shadow: none;
+
+        padding: 0;
+
+        transform: none;
+
+        display: flex;
+
+        justify-content: space-between;
+
+        align-items: center;
+    }
+
+    .coord-text {
+
+        background: rgba(255,255,255,0.92);
+
+        padding: 10px 14px;
+
+        border-radius: 16px;
+
+        box-shadow: 0 4px 14px rgba(0,0,0,0.12);
+    }
+
+    .bottom-zoom {
+
+        margin-left: 10px;
+    }
+
+    .bottom-zoom button {
+
+        width: 42px;
+
+        height: 42px;
+
+        border-radius: 14px;
     }
 }
 
