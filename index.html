@@ -1171,11 +1171,18 @@ body {
    MOBILE INFO
 ====================================================== */
 
-/* ======================================================
-   MOBILE RESPONSIVE FIX
-====================================================== */
-
 @media (max-width: 768px) {
+	#infoPanel {
+
+    overflow-y: auto;
+
+    -webkit-overflow-scrolling: touch;
+}
+
+.coord-text {
+
+    font-size: 11px;
+}
 
     /* =========================================
        HEADER
